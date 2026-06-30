@@ -2,1491 +2,3121 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>张晶雪 · 个人主页</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🦊🐰 疯狂课程表 · Zootopia Scheduler</title>
 <style>
-/* ========== 全局样式 ========== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
-  background: #f0f2f5;
-  color: #1a1a2e;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ========== 整体 Tabs 导航 ========== */
-.main-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: rgba(255,255,255,.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0,0,0,.06);
-  display: flex;
-  justify-content: center;
-  gap: 0;
-  padding: 0;
-  height: 48px;
-}
-.main-nav button {
-  flex: 1;
-  max-width: 180px;
-  border: none;
-  background: transparent;
-  font-size: 15px;
-  font-weight: 500;
-  color: #9ca3af;
-  cursor: pointer;
-  transition: all .2s;
-  position: relative;
-  letter-spacing: 1px;
-}
-.main-nav button.active {
-  color: #4f46e5;
-}
-.main-nav button.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 20%;
-  right: 20%;
-  height: 3px;
-  background: #4f46e5;
-  border-radius: 3px 3px 0 0;
-}
-.main-nav button:hover {
-  color: #4f46e5;
-}
-
-/* ========== Tab 容器 ========== */
-.tab-content {
-  display: none;
-  margin-top: 48px;
-  min-height: calc(100vh - 48px);
-}
-.tab-content.active {
-  display: block;
-}
-
-/* ========== 首页样式 ========== */
-.home-page {
-  max-width: 650px;
-  margin: 80px auto 60px;
-  padding: 0 24px;
-}
-.home-page h1 {
-  font-size: 32px;
-  color: #2c3e50;
-  margin-bottom: 16px;
-}
-.home-page p {
-  font-size: 16px;
-  line-height: 1.8;
-  color: #4b5563;
-  margin-bottom: 8px;
-}
-.home-page hr {
-  margin: 32px 0 24px;
-  border: none;
-  border-top: 1px solid #e5e7eb;
-}
-.home-page .tagline {
-  display: inline-block;
-  background: #eef2ff;
-  color: #4f46e5;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  margin-bottom: 20px;
-}
-.home-page small {
-  color: #9ca3af;
-  font-size: 13px;
-}
-
-/* ========== 课程表页面容器 ========== */
-.schedule-page {
-  width: 100%;
-  min-height: calc(100vh - 48px);
-}
-
-/* ========== 课程表原有样式 ========== */
-
-/* ========== Reset & Base ========== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ============================================================
+   CSS Custom Properties & Reset
+   ============================================================ */
 :root {
-  --bg: #f0f2f5;
-  --card: #ffffff;
-  --text: #1a1a2e;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
-  --primary: #4f46e5;
-  --primary-light: #eef2ff;
-  --border: #e5e7eb;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
-  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-  --shadow-md: 0 4px 6px rgba(0,0,0,.06), 0 2px 4px rgba(0,0,0,.04);
-  --shadow-lg: 0 10px 25px rgba(0,0,0,.1), 0 4px 10px rgba(0,0,0,.06);
-  --radius: 14px;
-  --radius-sm: 10px;
-  --radius-xs: 8px;
-  --safe-bottom: env(safe-area-inset-bottom, 16px);
-  --nav-h: 64px;
-  /* course type colors */
-  --c-math: #ef4444;
-  --c-math-bg: #fef2f2;
-  --c-english: #8b5cf6;
-  --c-english-bg: #f5f3ff;
-  --c-cs: #3b82f6;
-  --c-cs-bg: #eff6ff;
-  --c-physics: #10b981;
-  --c-physics-bg: #ecfdf5;
-  --c-pe: #f59e0b;
-  --c-pe-bg: #fffbeb;
-  --c-politics: #ec4899;
-  --c-politics-bg: #fdf2f8;
-  --c-elective: #14b8a6;
-  --c-elective-bg: #f0fdfa;
-  --c-default: #6366f1;
-  --c-default-bg: #eef2ff;
-  --today-glow: #4f46e5;
-  --now-bar: #ef4444;
+  --orange: #FF8C00;      /* Nick Wilde 🦊 */
+  --orange-light: #FFB347;
+  --orange-bg: #FFF3E0;
+  --blue: #4A90D9;        /* Judy Hopps 🐰 */
+  --blue-light: #7AB8F5;
+  --blue-bg: #E8F4FD;
+  --green: #52C41A;       /* Nature 🌿 */
+  --green-light: #73D13D;
+  --green-bg: #F0FFF0;
+  --gold: #FFD700;        /* Stars ⭐ */
+  --gold-light: #FFED4A;
+  --red: #FF4D4F;
+  --red-light: #FF7875;
+  --bg: #FFF8F0;
+  --card: #FFFFFF;
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  --text: #2C3E50;
+  --text-secondary: #7F8C8D;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --font: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  font-family: var(--font);
   background: var(--bg);
   color: var(--text);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
-  overscroll-behavior: none;
-  min-height: 100dvh;
-  display: flex;
-  justify-content: center;
-}
-.app {
-  width: 100%;
-  max-width: 500px;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ========== Header ========== */
+/* ============================================================
+   Background decoration
+   ============================================================ */
+body::before {
+  content: '';
+  position: fixed;
+  top: -120px; right: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, var(--orange-bg) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -100px; left: -60px;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, var(--blue-bg) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   App Container
+   ============================================================ */
+.app {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 12px 16px 100px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
 .header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  text-align: center;
+  padding: 18px 0 10px;
 }
-.header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+.header h1 {
+  font-size: 1.7rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--blue) 50%, var(--green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
 }
-.header-date {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -.3px;
-}
-.header-sub {
-  font-size: 12px;
+.header .subtitle {
+  font-size: 0.85rem;
   color: var(--text-secondary);
   margin-top: 2px;
 }
-.week-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  background: var(--primary-light);
-  color: var(--primary);
-  cursor: pointer;
-  user-select: none;
-  transition: all .2s;
-  border: 1.5px solid transparent;
-  white-space: nowrap;
-}
-.week-badge:active { transform: scale(.95); }
-.week-badge.even { background: #fef3c7; color: #d97706; border-color: #fcd34d; }
 
-/* ========== Next Class Bar ========== */
-.next-bar {
-  margin: 12px 16px 0;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #eef2ff, #faf5ff);
-  border-radius: var(--radius-sm);
+/* ============================================================
+   Mode Switcher
+   ============================================================ */
+.mode-switch {
+  display: flex;
+  background: var(--card);
+  border-radius: 30px;
+  padding: 4px;
+  box-shadow: var(--card-shadow);
+  margin: 8px 0 16px;
+  position: relative;
+}
+.mode-switch button {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 26px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  background: transparent;
+  color: var(--text-secondary);
+  position: relative;
+  z-index: 1;
+  font-family: var(--font);
+}
+.mode-switch button.active {
+  background: var(--orange);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255,140,0,0.35);
+}
+.mode-switch button .emoji { font-size: 1.1rem; margin-right: 4px; }
+
+/* ============================================================
+   Cards
+   ============================================================ */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+}
+.card-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
-  border: 1px solid #c7d2fe;
-  animation: fadeIn .3s ease;
+  margin-bottom: 12px;
 }
-.next-bar .dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--primary);
-  animation: pulse 2s infinite;
+.card-header .icon {
+  font-size: 1.8rem;
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px;
   flex-shrink: 0;
 }
-.next-bar .next-label { color: var(--primary); font-weight: 600; font-size: 12px; white-space: nowrap; }
-.next-bar .next-info { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.next-bar .next-time { color: var(--text-secondary); font-size: 12px; white-space: nowrap; }
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .4; transform: scale(1.4); }
+.card-header .icon.orange { background: var(--orange-bg); }
+.card-header .icon.blue { background: var(--blue-bg); }
+.card-header .icon.green { background: var(--green-bg); }
+.card-header .title {
+  font-weight: 700;
+  font-size: 1rem;
+  flex: 1;
 }
-@keyframes fadeIn {
+.card-header .badge {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.badge-orange { background: var(--orange-bg); color: var(--orange); }
+.badge-blue { background: var(--blue-bg); color: var(--blue); }
+.badge-green { background: var(--green-bg); color: var(--green); }
+.badge-gold { background: #FFF9E6; color: #B8860B; }
+.badge-purple { background: #F3E8FF; color: #7C3AED; }
+
+/* ============================================================
+   Today Section (Child Mode)
+   ============================================================ */
+.today-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--blue), var(--blue-light));
+  border-radius: var(--radius);
+  color: #fff;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(74,144,217,0.3);
+}
+.today-bar .date-info { font-weight: 700; font-size: 1.05rem; }
+.today-bar .day-name { font-size: 1.6rem; font-weight: 800; }
+.today-bar .streak-badge {
+  background: rgba(255,255,255,0.25);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  backdrop-filter: blur(4px);
+}
+
+/* ============================================================
+   Course Card (Child Mode)
+   ============================================================ */
+.course-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+  border-left: 5px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+.course-card.checked-in {
+  border-left-color: var(--green);
+  background: linear-gradient(135deg, #fff 0%, var(--green-bg) 100%);
+}
+.course-card .course-emoji {
+  font-size: 2.2rem;
+  width: 50px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.course-card .course-emoji.bg-orange { background: var(--orange-bg); }
+.course-card .course-emoji.bg-blue { background: var(--blue-bg); }
+.course-card .course-emoji.bg-green { background: var(--green-bg); }
+.course-card .course-info { flex: 1; min-width: 0; }
+.course-card .course-name { font-weight: 700; font-size: 1rem; }
+.course-card .course-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  display: flex; gap: 8px; align-items: center;
+}
+.course-card .course-points {
+  font-size: 0.8rem;
+  color: var(--gold);
+  font-weight: 700;
+}
+.course-card .checkin-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.checkin-btn.ready {
+  background: var(--orange);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(255,140,0,0.35);
+}
+.checkin-btn.ready:active { transform: scale(0.95); }
+.checkin-btn.done {
+  background: var(--green-bg);
+  color: var(--green);
+  cursor: default;
+}
+.checkin-btn.locked {
+  background: #f0f0f0;
+  color: #bbb;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   Empty State
+   ============================================================ */
+.empty-state {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--text-secondary);
+}
+.empty-state .emoji { font-size: 3rem; display: block; margin-bottom: 8px; }
+.empty-state .text { font-size: 0.95rem; }
+
+/* ============================================================
+   Week View
+   ============================================================ */
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 6px;
+}
+.week-day {
+  text-align: center;
+  padding: 8px 2px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+.week-day .dow { font-weight: 700; margin-bottom: 2px; }
+.week-day .date-num {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.week-day.today .date-num {
+  background: var(--orange);
+  color: #fff;
+}
+.week-day.has-courses::after {
+  content: '';
+  display: block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  margin: 2px auto 0;
+}
+.week-day.today.has-courses::after { background: var(--orange); }
+.week-day .course-dots {
+  display: flex; gap: 2px; justify-content: center; margin-top: 2px;
+}
+.week-day .dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+}
+.dot-orange { background: var(--orange); }
+.dot-blue { background: var(--blue); }
+.dot-green { background: var(--green); }
+
+/* ============================================================
+   Points & Stats Display
+   ============================================================ */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+  box-shadow: var(--card-shadow);
+}
+.stat-card .stat-icon { font-size: 1.8rem; }
+.stat-card .stat-value { font-size: 1.8rem; font-weight: 800; margin: 4px 0; }
+.stat-card .stat-label { font-size: 0.78rem; color: var(--text-secondary); }
+.stat-card.gold { background: linear-gradient(135deg, #FFF9E6, #FFF3CD); }
+.stat-card.fire { background: linear-gradient(135deg, #FFF0F0, #FFE4E1); }
+.stat-card.shop {
+  background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.stat-card.shop:active { transform: scale(0.95); }
+
+/* ============================================================
+   Celebration Overlay
+   ============================================================ */
+.celebration-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.celebration-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 30px 24px;
+  text-align: center;
+  max-width: 340px;
+  width: 90%;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+@keyframes popIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.celebration-card .celeb-emoji {
+  font-size: 4rem;
+  animation: bounce 0.6s ease infinite alternate;
+}
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-15px); }
+}
+.celebration-card .celeb-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--orange);
+  margin: 8px 0 4px;
+}
+.celebration-card .celeb-msg {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.celebration-card .celeb-points {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin: 8px 0;
+}
+.celebration-card .celeb-close {
+  margin-top: 14px;
+  padding: 10px 32px;
+  border: none;
+  border-radius: 25px;
+  background: var(--orange);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: var(--font);
+}
+
+/* ============================================================
+   Confetti
+   ============================================================ */
+.confetti-container {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 999;
+}
+.confetti-piece {
+  position: absolute;
+  width: 12px; height: 12px;
+  border-radius: 3px;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+/* ============================================================
+   Parent Mode: Tabs
+   ============================================================ */
+.parent-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+.parent-tabs button {
+  flex: 1;
+  padding: 8px 4px;
+  border: 2px solid #eee;
+  border-radius: 25px;
+  background: #fff;
+  font-weight: 600;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font);
+}
+.parent-tabs button.active {
+  border-color: var(--blue);
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+/* ============================================================
+   Parent Mode: Course Group Cards
+   ============================================================ */
+.course-group-list {
+  max-height: 55vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+.course-group-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+  border-left: 5px solid transparent;
+  position: relative;
+}
+.course-group-card:active { transform: scale(0.985); }
+.course-group-card.type-fixed { border-left-color: var(--orange); }
+.course-group-card.type-flexible { border-left-color: var(--blue); }
+.course-group-card .cgc-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.course-group-card .cgc-emoji {
+  font-size: 2rem;
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+.course-group-card .cgc-emoji.bg-orange { background: var(--orange-bg); }
+.course-group-card .cgc-emoji.bg-blue { background: var(--blue-bg); }
+.course-group-card .cgc-emoji.bg-green { background: var(--green-bg); }
+.course-group-card .cgc-info { flex: 1; min-width: 0; }
+.course-group-card .cgc-name {
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+}
+.course-group-card .cgc-schedule {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+.course-group-card .cgc-meta {
+  display: flex; gap: 14px; align-items: center;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+.course-group-card .cgc-meta span {
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.course-group-card .cgc-actions {
+  display: flex; gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+.course-group-card .cgc-actions button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: var(--transition);
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.cgc-btn-edit { background: var(--blue-bg); color: var(--blue); }
+.cgc-btn-delete { background: #FFF0F0; color: var(--red); }
+.cgc-btn-edit:active, .cgc-btn-delete:active { transform: scale(0.93); }
+
+/* ============================================================
+   Day Multi-Select Toggles
+   ============================================================ */
+.day-toggles {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.day-toggle {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  border: 2px solid #eee;
+  border-radius: 22px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  background: #fff;
+  color: var(--text-secondary);
+  font-family: var(--font);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.day-toggle.selected {
+  border-color: var(--blue);
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+/* ============================================================
+   Week Type Selector
+   ============================================================ */
+.week-type-selector {
+  display: flex;
+  gap: 4px;
+}
+.week-type-opt {
+  flex: 1;
+  padding: 8px 6px;
+  border: 2px solid #eee;
+  border-radius: 22px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  background: #fff;
+  color: var(--text-secondary);
+  text-align: center;
+  font-family: var(--font);
+  user-select: none;
+}
+.week-type-opt.selected {
+  border-color: var(--green);
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+/* ============================================================
+   Parent Mode: Course List Item (legacy, kept for day detail)
+   ============================================================ */
+.course-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: #fafafa;
+  margin-bottom: 8px;
+  transition: var(--transition);
+}
+.course-list-item .item-emoji { font-size: 1.8rem; flex-shrink: 0; }
+.course-list-item .item-info { flex: 1; min-width: 0; }
+.course-list-item .item-name { font-weight: 700; font-size: 0.9rem; }
+.course-list-item .item-detail { font-size: 0.75rem; color: var(--text-secondary); }
+.course-list-item .item-actions { display: flex; gap: 6px; }
+.course-list-item .item-actions button {
+  width: 32px; height: 32px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-edit { background: var(--blue-bg); color: var(--blue); }
+.btn-delete { background: #FFF0F0; color: var(--red); }
+
+/* ============================================================
+   Parent Mode: Form / Modal
+   ============================================================ */
+.form-group {
+  margin-bottom: 12px;
+}
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #eee;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: var(--font);
+  transition: var(--transition);
+  background: #fff;
+}
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(74,144,217,0.1);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--blue); color: #fff; box-shadow: 0 3px 12px rgba(74,144,217,0.3); }
+.btn-success { background: var(--green); color: #fff; box-shadow: 0 3px 12px rgba(82,196,26,0.3); }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-outline { background: #fff; color: var(--blue); border: 2px solid var(--blue); }
+.btn-orange { background: var(--orange); color: #fff; }
+.btn-sm { padding: 6px 14px; font-size: 0.8rem; }
+.btn-block { width: 100%; justify-content: center; }
+
+/* ============================================================
+   Password Modal
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500;
+}
+.modal-box {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-box h3 { font-size: 1.2rem; margin-bottom: 12px; text-align: center; }
+.modal-box .error-msg {
+  color: var(--red);
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 6px;
+  min-height: 20px;
+}
+
+/* ============================================================
+   Statistics Dashboard
+   ============================================================ */
+.stat-dashboard .stat-block {
+  background: #fafafa;
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.stat-block .stat-block-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}
+.stat-block .stat-big {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--blue);
+}
+.stat-block .stat-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.stat-bar {
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+.stat-bar-fill.blue { background: var(--blue); }
+.stat-bar-fill.green { background: var(--green); }
+.stat-bar-fill.orange { background: var(--orange); }
+.stat-bar-fill.gold { background: var(--gold); }
+
+/* ============================================================
+   Toast
+   ============================================================ */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  z-index: 600;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2s forwards;
+  white-space: nowrap;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 400px) {
+  .app { padding: 8px 10px 100px; }
+  .header h1 { font-size: 1.4rem; }
+  .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .week-grid { gap: 2px; }
+  .week-day { padding: 6px 1px; font-size: 0.7rem; }
+  .course-card { padding: 12px; gap: 10px; }
+  .checkin-btn { padding: 8px 14px; font-size: 0.8rem; }
+  .day-toggle { padding: 6px 8px; font-size: 0.72rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .parent-tabs button { font-size: 0.68rem; padding: 6px 2px; }
+  .schedule-time-row { padding: 6px 8px; gap: 4px; }
+  .schedule-time-row .day-label { font-size: 0.72rem; min-width: 36px; }
+  .schedule-time-row select { font-size: 0.72rem; padding: 4px 6px; }
+}
+@media (min-width: 768px) {
+  .app { padding: 20px 24px 40px; }
+  .week-grid { gap: 6px; }
+  .week-day { font-size: 0.8rem; padding: 10px 4px; }
+}
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+
+/* ============================================================
+   Section visibility
+   ============================================================ */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ============================================================
+   Add Course button area
+   ============================================================ */
+.add-course-area {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+}
+
+/* ============================================================
+   Schedule Time Rows (per-day time editing)
+   ============================================================ */
+.schedule-time-rows {
+  margin-top: 8px;
+}
+.schedule-time-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  animation: slideDown 0.2s ease;
+}
+@keyframes slideDown {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-/* ========== Main Content ========== */
-.main {
+.schedule-time-row .day-label {
+  font-weight: 700;
+  font-size: 0.82rem;
+  min-width: 44px;
+  color: var(--blue);
+}
+.schedule-time-row select {
+  padding: 6px 8px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-family: var(--font);
+  background: #fff;
   flex: 1;
-  overflow-y: auto;
-  padding: 0 0 calc(var(--nav-h) + var(--safe-bottom) + 16px);
-  -webkit-overflow-scrolling: touch;
 }
-.page { display: none; animation: fadeIn .25s ease; }
-.page.active { display: block; }
-
-/* ========== Today View ========== */
-.today-empty {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-muted);
+.schedule-time-row select:focus {
+  outline: none;
+  border-color: var(--blue);
 }
-.today-empty .icon { font-size: 56px; margin-bottom: 16px; }
-.today-empty .msg { font-size: 16px; font-weight: 500; }
-.today-empty .sub { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
-
-.timeline { padding: 12px 16px; }
-.timeline-item {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 8px;
-  position: relative;
-  align-items: flex-start;
-}
-.time-col {
-  width: 52px;
-  flex-shrink: 0;
-  text-align: right;
-  padding-top: 12px;
-}
-.time-col .start { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1; }
-.time-col .end { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-.time-col .slot-num {
-  font-size: 9px;
-  color: var(--text-muted);
-  background: var(--bg);
-  border-radius: 4px;
-  padding: 1px 6px;
-  display: inline-block;
-  margin-top: 3px;
-  font-weight: 500;
-}
-
-.course-card {
-  flex: 1;
-  background: var(--card);
-  border-radius: var(--radius-sm);
-  padding: 14px 16px;
-  box-shadow: var(--shadow-sm);
-  border-left: 4px solid var(--c-default);
+.set-all-same-btn {
+  font-size: 0.72rem;
+  padding: 5px 12px;
+  border: 1px dashed var(--blue);
+  border-radius: 15px;
+  background: var(--blue-bg);
+  color: var(--blue);
   cursor: pointer;
-  transition: all .18s ease;
-  position: relative;
-  min-height: 70px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.course-card:active { transform: scale(.98); box-shadow: var(--shadow-md); }
-.course-card.now {
-  border-left-width: 5px;
-  box-shadow: var(--shadow-md), 0 0 0 3px rgba(79,70,229,.15);
-  animation: glowPulse 2.5s ease-in-out infinite;
-}
-@keyframes glowPulse {
-  0%, 100% { box-shadow: var(--shadow-md), 0 0 0 3px rgba(79,70,229,.15); }
-  50% { box-shadow: var(--shadow-md), 0 0 0 7px rgba(79,70,229,.05); }
-}
-.course-card .name { font-size: 15px; font-weight: 700; margin-bottom: 4px; letter-spacing: -.2px; }
-.course-card .meta { font-size: 12px; color: var(--text-secondary); display: flex; gap: 10px; flex-wrap: wrap; }
-.course-card .meta span { display: inline-flex; align-items: center; gap: 3px; }
-.course-card .badge {
-  position: absolute; top: 8px; right: 10px;
-  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  font-family: var(--font);
   font-weight: 600;
+  transition: var(--transition);
+  margin-top: 4px;
 }
-.badge-week { background: #fef3c7; color: #92400e; }
-.badge-elective { background: #d1fae5; color: #065f46; }
-.badge-now {
-  position: absolute; top: -8px; left: 12px;
-  font-size: 10px; padding: 2px 8px; border-radius: 8px;
-  background: var(--now-bar); color: #fff;
-  font-weight: 700; letter-spacing: .5px;
-  animation: fadeIn .3s;
-}
+.set-all-same-btn:active { background: #d0e8fb; }
 
-/* course type borders */
-.course-card.type-math { border-left-color: var(--c-math); }
-.course-card.type-english { border-left-color: var(--c-english); }
-.course-card.type-cs { border-left-color: var(--c-cs); }
-.course-card.type-physics { border-left-color: var(--c-physics); }
-.course-card.type-pe { border-left-color: var(--c-pe); }
-.course-card.type-politics { border-left-color: var(--c-politics); }
-.course-card.type-elective { border-left-color: var(--c-elective); }
-
-/* ========== Full Table View ========== */
-.table-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 12px 16px;
-}
-.table-scroll {
-  min-width: 620px;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-table.schedule {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--card);
-  font-size: 12px;
-}
-table.schedule th, table.schedule td {
-  border: 1px solid #f3f4f6;
-  padding: 5px 4px;
+/* ============================================================
+   Points Shop Styles
+   ============================================================ */
+.shop-period-header {
+  background: linear-gradient(135deg, #FFF9E6, #FFF3CD);
+  border-radius: var(--radius);
+  padding: 18px;
   text-align: center;
-  vertical-align: middle;
+  margin-bottom: 14px;
+  border: 2px solid var(--gold-light);
 }
-table.schedule thead th {
-  background: #f9fafb;
+.shop-period-header .period-label {
+  font-size: 0.85rem;
+  color: #B8860B;
   font-weight: 600;
-  font-size: 13px;
-  padding: 10px 4px;
-  position: sticky;
-  top: 0;
-  color: var(--text);
 }
-table.schedule thead th.today-col {
-  background: var(--primary-light);
-  color: var(--primary);
-  box-shadow: inset 0 -2px 0 var(--primary);
+.shop-period-header .period-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #8B6914;
+  margin: 4px 0;
 }
-table.schedule .time-cell {
-  font-size: 11px;
+.shop-period-header .period-days-left {
+  font-size: 0.78rem;
   color: var(--text-secondary);
-  background: #fafbfc;
-  font-weight: 500;
-  white-space: nowrap;
-  padding: 8px 6px;
-  min-width: 56px;
-  line-height: 1.4;
 }
-table.schedule .time-cell .slot-label { font-size: 9px; color: var(--text-muted); }
-table.schedule td.today-col { background: #f5f3ff; }
-table.schedule td.has-course { cursor: pointer; transition: all .12s; }
-table.schedule td.has-course:active { filter: brightness(.94); }
-table.schedule .mini-course {
-  border-radius: 6px;
-  padding: 4px 5px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.3;
-  word-break: keep-all;
-}
-table.schedule .mini-course .mini-meta { font-size: 9px; font-weight: 400; opacity: .7; margin-top: 1px; }
-.mini-course.type-math { background: var(--c-math-bg); color: var(--c-math); }
-.mini-course.type-english { background: var(--c-english-bg); color: var(--c-english); }
-.mini-course.type-cs { background: var(--c-cs-bg); color: var(--c-cs); }
-.mini-course.type-physics { background: var(--c-physics-bg); color: var(--c-physics); }
-.mini-course.type-pe { background: var(--c-pe-bg); color: #b45309; }
-.mini-course.type-politics { background: var(--c-politics-bg); color: var(--c-politics); }
-.mini-course.type-elective { background: var(--c-elective-bg); color: #0f766e; }
-.mini-course.now-slot { outline: 2px solid var(--now-bar); outline-offset: 1px; border-radius: 4px; }
-
-/* ========== Stats View ========== */
-.stats { padding: 16px; }
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-.stat-card {
+.shop-progress-section {
   background: var(--card);
-  border-radius: var(--radius-sm);
-  padding: 18px 16px;
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--card-shadow);
+}
+.shop-tier-display {
+  text-align: center;
+  padding: 14px;
+}
+.shop-tier-display .tier-emoji {
+  font-size: 3rem;
+}
+.shop-tier-display .tier-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 4px 0;
+}
+.shop-tier-display .tier-reward {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+.shop-tier-display .tier-condition {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.shop-progress-bar {
+  height: 12px;
+  background: #eee;
+  border-radius: 6px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.shop-progress-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+.shop-progress-bar-fill.gold { background: linear-gradient(90deg, #FFD700, #FFA500); }
+.shop-progress-bar-fill.silver { background: linear-gradient(90deg, #C0C0C0, #A0A0A0); }
+.shop-progress-bar-fill.bronze { background: linear-gradient(90deg, #CD7F32, #B8860B); }
+.shop-progress-bar-fill.low { background: #FFCDD2; }
+.shop-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
   text-align: center;
 }
-.stat-card .stat-val { font-size: 30px; font-weight: 700; color: var(--primary); line-height: 1; }
-.stat-card .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 6px; font-weight: 500; }
-.stats-section { margin-top: 18px; }
-.stats-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
-.type-list { display: flex; flex-direction: column; gap: 8px; }
-.type-row {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--card); padding: 12px 14px;
-  border-radius: var(--radius-xs); box-shadow: var(--shadow-sm);
+.shop-stat .shop-stat-val {
+  font-size: 1.3rem;
+  font-weight: 800;
 }
-.type-dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
-.type-dot.math { background: var(--c-math); }
-.type-dot.english { background: var(--c-english); }
-.type-dot.cs { background: var(--c-cs); }
-.type-dot.physics { background: var(--c-physics); }
-.type-dot.pe { background: var(--c-pe); }
-.type-dot.politics { background: var(--c-politics); }
-.type-dot.elective { background: var(--c-elective); }
-.type-row .type-name { flex: 1; font-size: 14px; font-weight: 500; }
-.type-row .type-count { font-size: 13px; color: var(--text-secondary); font-weight: 600; }
-
-/* ========== Bottom Nav ========== */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 500px;
-  background: rgba(255,255,255,.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--border);
-  display: flex;
-  z-index: 100;
-  padding-bottom: var(--safe-bottom);
-  box-shadow: 0 -1px 8px rgba(0,0,0,.04);
+.shop-stat .shop-stat-lbl {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
 }
-.nav-tab {
-  flex: 1;
+.shop-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.shop-calendar .cal-day-header {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px;
+  color: var(--text-secondary);
+}
+.shop-calendar .cal-day {
+  aspect-ratio: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 7px 4px;
-  gap: 3px;
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: all .2s;
-  border: none;
-  background: none;
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 500;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: default;
   position: relative;
 }
-.nav-tab .nav-icon { font-size: 22px; line-height: 1; }
-.nav-tab.active { color: var(--primary); font-weight: 600; }
-.nav-tab.active::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 50%; transform: translateX(-50%);
-  width: 28px; height: 3px;
-  background: var(--primary);
-  border-radius: 0 0 3px 3px;
-}
-
-/* ========== Modal / Overlay ========== */
-.overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.45);
-  z-index: 200;
+.shop-calendar .cal-day.checked { background: #d4edda; color: #155724; }
+.shop-calendar .cal-day.missed { background: #f8d7da; color: #721c24; }
+.shop-calendar .cal-day.no-course { background: #f0f0f0; color: #bbb; }
+.shop-calendar .cal-day.future { background: #fff; color: #ccc; border: 1px dashed #eee; }
+.shop-legend {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  animation: fadeIn .25s;
-}
-.modal {
-  background: var(--card);
-  border-radius: 20px 20px 0 0;
-  width: 100%;
-  max-width: 500px;
-  max-height: 85dvh;
-  overflow-y: auto;
-  padding: 8px 0 var(--safe-bottom);
-  animation: slideUp .3s cubic-bezier(.32,.72,0,1);
-  box-shadow: var(--shadow-lg);
-}
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-.modal-handle {
-  width: 36px; height: 5px;
-  background: #d1d5db; border-radius: 3px;
-  margin: 8px auto 14px;
-}
-.modal-header {
-  padding: 0 20px 14px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-}
-.modal-header h2 { font-size: 18px; font-weight: 700; }
-.modal-close {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: var(--bg); border: none;
-  font-size: 16px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 0.7rem;
   color: var(--text-secondary);
-  transition: background .15s;
+  flex-wrap: wrap;
 }
-.modal-close:active { background: var(--border); }
-.modal-body { padding: 16px 20px; }
-.modal-body .detail-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 14px 0;
-  border-bottom: 1px solid #f3f4f6;
-  font-size: 14px;
+.settlement-history-item {
+  background: #fafafa;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.modal-body .detail-row:last-child { border-bottom: none; }
-.detail-icon { font-size: 20px; width: 30px; text-align: center; flex-shrink: 0; }
-.detail-label { color: var(--text-secondary); font-size: 11px; margin-bottom: 2px; }
-.detail-val { font-weight: 600; font-size: 15px; }
-
-/* edit form */
-.form-group { margin-bottom: 14px; }
-.form-group label {
-  display: block; font-size: 12px; font-weight: 600;
-  color: var(--text-secondary); margin-bottom: 4px;
-  text-transform: uppercase; letter-spacing: .5px;
+.settlement-history-item .settle-tier {
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
-.form-group input, .form-group select {
-  width: 100%; padding: 10px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-xs);
-  font-size: 15px; font-family: inherit;
-  background: #f9fafb; color: var(--text);
-  transition: border-color .2s, background .2s;
-  -webkit-appearance: none;
-  appearance: none;
+.settlement-history-item .settle-info {
+  flex: 1;
+  min-width: 0;
 }
-.form-group select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
+.settlement-history-item .settle-period {
+  font-weight: 700;
+  font-size: 0.9rem;
 }
-.form-group input:focus, .form-group select:focus {
-  outline: none; border-color: var(--primary); background: #fff;
+.settlement-history-item .settle-detail {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
-.btn-row { display: flex; gap: 10px; margin-top: 20px; }
-.btn {
-  flex: 1; padding: 12px;
-  border-radius: var(--radius-xs);
-  font-size: 15px; font-weight: 600;
-  cursor: pointer; border: none; font-family: inherit;
-  transition: all .15s;
-  display: flex; align-items: center; justify-content: center;
+.settlement-history-item .settle-reward {
+  font-weight: 700;
+  color: var(--gold);
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
-.btn:active { transform: scale(.97); }
-.btn-primary { background: var(--primary); color: #fff; }
-.btn-secondary { background: var(--bg); color: var(--text); border: 1.5px solid var(--border); }
-.btn-danger { background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; }
-
-/* detail modal actions */
-.modal-actions { display: flex; gap: 10px; padding: 0 20px 16px; }
-
-/* Toast */
-.toast {
-  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-  background: #1f2937; color: #fff;
-  padding: 10px 22px; border-radius: 20px;
-  font-size: 13px; font-weight: 500;
-  z-index: 300;
-  animation: toastIn .3s ease, toastOut .3s ease 1.5s forwards;
-  pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+.settle-btn {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-family: var(--font);
+  box-shadow: 0 3px 12px rgba(255,165,0,0.35);
+  transition: var(--transition);
+  width: 100%;
+  margin-top: 14px;
 }
-@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-@keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
-
-/* Responsive tweaks */
-@media (min-width: 420px) {
-  .time-col { width: 60px; }
-  table.schedule { font-size: 13px; }
-  table.schedule .mini-course { font-size: 12px; }
-  .course-card .name { font-size: 16px; }
+.settle-btn:active { transform: scale(0.97); }
+.settle-btn:disabled {
+  background: #ddd;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
 }
-
-
-/* ========== 整合修复 ========== */
-body {
-  background: #f0f2f5;
+.child-shop-card {
+  background: linear-gradient(135deg, #FFF9E6, #FFF3CD);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 14px;
+  border: 2px solid var(--gold-light);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
-.app {
-  padding-bottom: 0;
+.child-shop-card:active { transform: scale(0.98); box-shadow: none; }
+.child-shop-card .shop-emoji { font-size: 2rem; flex-shrink: 0; }
+.child-shop-card .shop-info { flex: 1; text-align: left; }
+.child-shop-card .shop-status {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-top: 0;
 }
-.bottom-nav {
-  display: none !important;
+.child-shop-card .shop-reward-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.child-shop-card .shop-arrow {
+  font-size: 1rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
 }
 </style>
 </head>
 <body>
 
-<!-- ========== 全局导航 ========== -->
-<nav class="main-nav">
-  <button class="active" data-tab="home">🏠 首页</button>
-  <button data-tab="schedule">📚 课程表</button>
-</nav>
-
-<!-- ========== 首页 ========== -->
-<div class="tab-content active" id="tab-home">
-  <div class="home-page">
-    <div class="tagline">✨ 个人主页</div>
-    <h1>👋 你好，我是张晶雪</h1>
-    <p>产品结构设计工程师 · 机械工程本科</p>
-    <p>兼职部门负责人，管理 ~30 人团队</p>
-    <p>热爱滑雪 🎿 · 音乐 🎵 · 电影 🎬</p>
-    <hr>
-    <p>用 Vercel 部署，全程在终端里完成。</p>
-    <p><small>2025年 · 由 Hermes AI 协助创建</small></p>
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="header">
+    <h1>🦊 疯狂课程表 🐰</h1>
+    <div class="subtitle">Zootopia · 亲子课程打卡系统</div>
   </div>
-</div>
 
-<!-- ========== 课程表 ========== -->
-<div class="tab-content" id="tab-schedule">
-  <div class="schedule-page">
-    <div class="app" id="app">
-<header class="header">
-    <div class="header-top">
+  <!-- Mode Switcher -->
+  <div class="mode-switch">
+    <button id="btnChildMode" class="active" onclick="switchMode('child')">
+      <span class="emoji">🐰</span> 儿童模式
+    </button>
+    <button id="btnParentMode" onclick="switchMode('parent')">
+      <span class="emoji">🦊</span> 家长模式
+    </button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CHILD MODE -->
+  <!-- ============================================================ -->
+  <div id="sectionChild" class="section active">
+    <!-- Today Bar -->
+    <div class="today-bar">
       <div>
-        <div class="header-date" id="headerDate">--</div>
-        <div class="header-sub" id="headerSub">--</div>
+        <div class="date-info" id="todayDate"></div>
+        <div class="day-name" id="todayDayName"></div>
       </div>
-      <div class="week-badge" id="weekBadge" onclick="toggleWeek()">
-        <span id="weekIcon">📅</span>
-        <span id="weekLabel">第1周</span>
-        <span style="font-size:10px;">▾</span>
-      </div>
-    </div>
-  </header>
-<main class="main" id="mainContent">
-    <!-- Page 0: Today -->
-    <div class="page active" id="page-today">
-      <div class="today-empty" id="todayEmpty">
-        <div class="icon">📭</div>
-        <div class="msg">今天没有课程安排</div>
-        <div class="sub">好好休息一下吧 ☕</div>
-      </div>
-      <div class="timeline" id="timeline"></div>
+      <div class="streak-badge" id="streakBadge">🔥 0天</div>
     </div>
 
-    <!-- Page 1: Full Table -->
-    <div class="page" id="page-table">
-      <div class="table-wrapper">
-        <div class="table-scroll" id="tableScroll"></div>
+    <!-- Points & Streak Cards -->
+    <div class="stats-row">
+      <div class="stat-card gold">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-value" id="totalPoints">0</div>
+        <div class="stat-label">总积分</div>
+      </div>
+      <div class="stat-card fire">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value" id="streakDays">0</div>
+        <div class="stat-label">连续打卡</div>
+      </div>
+      <div class="stat-card shop" id="childShopCard" onclick="showChildShopDetail()">
+        <div class="stat-icon" id="childShopEmoji">🎁</div>
+        <div class="stat-value" id="childShopStatus">加载中</div>
+        <div class="stat-label" id="childShopHint">积分商城</div>
       </div>
     </div>
 
-    <!-- Page 2: Stats -->
-    <div class="page" id="page-stats">
-      <div class="stats" id="statsContent"></div>
-    </div>
-  </main>
-<div class="overlay" id="detailOverlay" style="display:none;" onclick="window.closeDetail(event)">
-    <div class="modal" id="detailModal" onclick="event.stopPropagation()">
-      <div class="modal-handle"></div>
-      <div class="modal-header">
-        <h2 id="detailTitle">课程详情</h2>
-        <button class="modal-close" onclick="window.closeDetail()">✕</button>
+    <!-- Today's Courses -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon blue">📋</div>
+        <div class="title">今日课程</div>
+        <span class="badge badge-blue" id="courseCount">0节</span>
       </div>
-      <div class="modal-body" id="detailBody"></div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" style="flex:1;" onclick="window.openEdit(window.currentDetailCourse)">✏️ 编辑</button>
-        <button class="btn btn-danger" style="flex:1;" onclick="window.deleteCourse(window.currentDetailCourse)">🗑️ 删除</button>
-      </div>
+      <div id="todayCourses"></div>
     </div>
-<div class="overlay" id="editOverlay" style="display:none;" onclick="window.closeEdit(event)">
-    <div class="modal" id="editModal" onclick="event.stopPropagation()">
-      <div class="modal-handle"></div>
-      <div class="modal-header">
-        <h2 id="editTitle">编辑课程</h2>
-        <button class="modal-close" onclick="window.closeEdit()">✕</button>
+
+    <!-- Week View -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon green">📅</div>
+        <div class="title">本周课程</div>
       </div>
-      <div class="modal-body" id="editBody"></div>
-    </div>
-<div id="toastContainer"></div>
+      <div class="week-grid" id="weekGrid"></div>
+      <div id="selectedDayCourses" style="margin-top:10px;"></div>
     </div>
   </div>
+
+  <!-- ============================================================ -->
+  <!-- PARENT MODE -->
+  <!-- ============================================================ -->
+  <div id="sectionParent" class="section">
+    <!-- Tabs -->
+    <div class="parent-tabs">
+      <button id="tabCourses" class="active" onclick="parentTab('courses')">📚 课程</button>
+      <button id="tabSchedule" onclick="parentTab('schedule')">📅 课表</button>
+      <button id="tabStats" onclick="parentTab('stats')">📊 统计</button>
+      <button id="tabShop" onclick="parentTab('shop')">🎁 商城</button>
+      <button id="tabSettings" onclick="parentTab('settings')">⚙️ 设置</button>
+    </div>
+
+    <!-- Tab: Courses -->
+    <div id="panelCourses" class="parent-panel active">
+      <div class="course-group-list" id="courseGroupList"></div>
+      <div class="add-course-area">
+        <button class="btn btn-primary" onclick="showCourseForm(null)" style="flex:1;">➕ 添加课程</button>
+        <button class="btn btn-outline btn-sm" onclick="resetDefaults()">🔄 恢复默认</button>
+      </div>
+    </div>
+
+    <!-- Tab: Schedule View (week view for parent) -->
+    <div id="panelSchedule" class="parent-panel" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="icon green">📅</div>
+          <div class="title">本周课表</div>
+          <span style="font-size:0.75rem;color:var(--text-secondary);" id="parentWeekLabel"></span>
+        </div>
+        <div class="week-grid" id="parentWeekGrid"></div>
+        <div id="parentDayDetail" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <!-- Tab: Stats -->
+    <div id="panelStats" class="parent-panel" style="display:none;">
+      <div class="stat-dashboard" id="statDashboard"></div>
+    </div>
+
+    <!-- Tab: Points Shop -->
+    <div id="panelShop" class="parent-panel" style="display:none;">
+      <div id="pointsShopContent"></div>
+    </div>
+
+    <!-- Tab: Settings -->
+    <div id="panelSettings" class="parent-panel" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div class="icon orange">🔑</div>
+          <div class="title">修改家长密码</div>
+        </div>
+        <div class="form-group">
+          <label>新密码</label>
+          <input type="password" id="newPassword" placeholder="输入新密码">
+        </div>
+        <button class="btn btn-orange btn-block" onclick="changePassword()">💾 保存密码</button>
+      </div>
+      <div class="card" style="margin-top:14px;">
+        <div class="card-header">
+          <div class="icon orange">🗑️</div>
+          <div class="title">数据管理</div>
+        </div>
+        <button class="btn btn-danger btn-block" onclick="clearAllData()">🗑️ 清除所有数据</button>
+        <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:8px;text-align:center;">
+          此操作不可恢复，将重置为默认数据
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Course Form Modal (Group-based editing with per-day times) -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="courseFormModal" style="display:none;" onclick="closeCourseForm(event)">
+    <div class="modal-box" style="max-width:440px;max-height:90vh;overflow-y:auto;" onclick="event.stopPropagation()">
+      <h3 id="formTitle">添加课程</h3>
+      <input type="hidden" id="editGroupId">
+
+      <div class="form-group">
+        <label>课程名称</label>
+        <input type="text" id="fName" placeholder="如：书法课">
+      </div>
+      <div class="form-group">
+        <label>Emoji 图标</label>
+        <input type="text" id="fEmoji" placeholder="如：✍️">
+      </div>
+
+      <div class="form-group">
+        <label>课程类型</label>
+        <div class="week-type-selector" id="fTypeSelector">
+          <div class="week-type-opt selected" data-val="fixed" onclick="selectType('fixed')">📌 固定课程</div>
+          <div class="week-type-opt" data-val="flexible" onclick="selectType('flexible')">🕐 灵活任务</div>
+        </div>
+        <input type="hidden" id="fType" value="fixed">
+      </div>
+
+      <div class="form-group">
+        <label>上课日期与时间（点击日期切换选择，下方设置对应时间）</label>
+        <div class="day-toggles" id="fDays">
+          <div class="day-toggle" data-day="1" onclick="toggleDay(1)">周一</div>
+          <div class="day-toggle" data-day="2" onclick="toggleDay(2)">周二</div>
+          <div class="day-toggle" data-day="3" onclick="toggleDay(3)">周三</div>
+          <div class="day-toggle" data-day="4" onclick="toggleDay(4)">周四</div>
+          <div class="day-toggle" data-day="5" onclick="toggleDay(5)">周五</div>
+          <div class="day-toggle" data-day="6" onclick="toggleDay(6)">周六</div>
+        </div>
+        <div class="schedule-time-rows" id="fScheduleTimeRows"></div>
+        <button class="set-all-same-btn" onclick="setAllSameTime()" id="setAllSameBtn" style="display:none;">
+          🔗 所有日期使用相同时间
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>重复周期</label>
+        <div class="week-type-selector" id="fWeekTypeSelector">
+          <div class="week-type-opt selected" data-val="every" onclick="selectWeekType('every')">🔄 每周</div>
+          <div class="week-type-opt" data-val="odd" onclick="selectWeekType('odd')">1️⃣ 单周</div>
+          <div class="week-type-opt" data-val="even" onclick="selectWeekType('even')">2️⃣ 双周</div>
+        </div>
+        <input type="hidden" id="fWeekType" value="every">
+        <div style="font-size:0.7rem;color:var(--text-secondary);margin-top:4px;">
+          当前为第 <span id="currentWeekNum" style="font-weight:700;"></span> 周
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>积分奖励</label>
+          <input type="number" id="fPoints" value="10" min="1">
+        </div>
+        <div class="form-group">
+          <label>老师</label>
+          <input type="text" id="fTeacher" placeholder="如：王老师">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>地点</label>
+        <input type="text" id="fLocation" placeholder="如：201教室">
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button class="btn btn-outline" onclick="closeCourseForm()" style="flex:1;">取消</button>
+        <button class="btn btn-primary" onclick="saveCourseGroup()" style="flex:1;">💾 保存</button>
+      </div>
+      <div id="deleteBtnWrap" style="display:none;margin-top:8px;">
+        <button class="btn btn-danger btn-block" onclick="deleteCourseGroupFromForm()">🗑️ 删除此课程</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Password Modal -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" id="passwordModal" style="display:none;">
+    <div class="modal-box">
+      <h3>🦊 家长验证</h3>
+      <div class="form-group">
+        <label>请输入家长密码</label>
+        <input type="password" id="passwordInput" placeholder="输入密码" onkeydown="if(event.key==='Enter')verifyPassword()">
+      </div>
+      <div class="error-msg" id="passwordError"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline" onclick="closePasswordModal()" style="flex:1;">取消</button>
+        <button class="btn btn-orange" onclick="verifyPassword()" style="flex:1;">🔓 验证</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- Celebration Overlay -->
+  <!-- ============================================================ -->
+  <div class="celebration-overlay" id="celebrationOverlay" style="display:none;">
+    <div class="celebration-card">
+      <div class="celeb-emoji" id="celebEmoji">🎉</div>
+      <div class="celeb-title" id="celebTitle">太棒了！</div>
+      <div class="celeb-msg" id="celebMsg"></div>
+      <div class="celeb-points" id="celebPoints"></div>
+      <div style="font-size:0.8rem;color:var(--text-secondary);" id="celebBonus"></div>
+      <button class="celeb-close" onclick="closeCelebration()">👍 知道了！</button>
+    </div>
+  </div>
+
+  <!-- Confetti Container -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
 </div>
 
+<!-- ============================================================ -->
+<!-- SCRIPTS -->
+<!-- ============================================================ -->
 <script>
-// ========== Tab 切换 ==========
-document.querySelectorAll('.main-nav button').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.main-nav button').forEach(function(b) { b.classList.remove('active'); });
-    document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
-    this.classList.add('active');
-    var tab = this.dataset.tab;
-    document.getElementById('tab-' + tab).classList.add('active');
+'use strict';
 
-    // 切换到课程表时才初始化
-    if (tab === 'schedule' && typeof init === 'function') {
-      if (!window._scheduleInited) {
-        window._scheduleInited = true;
-        init();
-      }
+// ============================================================
+// Default Data
+// ============================================================
+const DEFAULT_COURSES = [
+  // Calligraphy — same time Mon-Fri
+  { id: 'c1', name: '书法课', emoji: '✍️', day: 1, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:1,startTime:'13:30',endTime:'16:30'}] },
+  { id: 'c2', name: '书法课', emoji: '✍️', day: 2, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:2,startTime:'13:30',endTime:'16:30'}] },
+  { id: 'c3', name: '书法课', emoji: '✍️', day: 3, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:3,startTime:'13:30',endTime:'16:30'}] },
+  { id: 'c4', name: '书法课', emoji: '✍️', day: 4, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:4,startTime:'13:30',endTime:'16:30'}] },
+  { id: 'c5', name: '书法课', emoji: '✍️', day: 5, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:5,startTime:'13:30',endTime:'16:30'}] },
+  // Flexible daily tasks
+  { id: 'f1', name: '语文大阅读', emoji: '📖', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  { id: 'f2', name: '英语单词打卡', emoji: '🔤', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  { id: 'f3', name: '听力练习', emoji: '🎧', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  { id: 'f4', name: '数学练习', emoji: '➕', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  // Duplicate flexible tasks for Tue-Fri
+  ...['f5','f6','f7','f8'].map((id, i) => ({ id, name: '语文大阅读', emoji: '📖', day: 2, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:2,startTime:'09:00',endTime:'21:00'}] })),
+  ...['f9','f10','f11','f12'].map((id, i) => {
+    const tasks = ['英语单词打卡','听力练习','数学练习','语文大阅读'];
+    return { id, name: tasks[i], emoji: ['🔤','🎧','➕','📖'][i], day: 3, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:3,startTime:'09:00',endTime:'21:00'}] };
+  }),
+  ...['f13','f14','f15','f16'].map((id, i) => {
+    const tasks = ['英语单词打卡','听力练习','数学练习','语文大阅读'];
+    return { id, name: tasks[i], emoji: ['🔤','🎧','➕','📖'][i], day: 4, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:4,startTime:'09:00',endTime:'21:00'}] };
+  }),
+  ...['f17','f18','f19','f20'].map((id, i) => {
+    const tasks = ['英语单词打卡','听力练习','数学练习','语文大阅读'];
+    return { id, name: tasks[i], emoji: ['🔤','🎧','➕','📖'][i], day: 5, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:5,startTime:'09:00',endTime:'21:00'}] };
+  }),
+  // Flexible tasks for weekends
+  { id: 'f21', name: '语文大阅读', emoji: '📖', day: 6, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:6,startTime:'09:00',endTime:'21:00'}] },
+  { id: 'f22', name: '英语单词打卡', emoji: '🔤', day: 6, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:6,startTime:'09:00',endTime:'21:00'}] },
+  { id: 'f23', name: '语文大阅读', emoji: '📖', day: 0, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:0,startTime:'09:00',endTime:'21:00'}] },
+  { id: 'f24', name: '英语单词打卡', emoji: '🔤', day: 0, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:0,startTime:'09:00',endTime:'21:00'}] },
+  // Fixed courses with DIFFERENT times on different days
+  { id: 'c6', name: '篮球课', emoji: '🏀', day: 3, startTime: '18:30', endTime: '20:00', type: 'fixed', points: 10, location: '体育馆', teacher: '', schedules: [{day:3,startTime:'18:30',endTime:'20:00'},{day:6,startTime:'19:00',endTime:'20:30'}] },
+  { id: 'c7', name: '菲尔德英语', emoji: '🇺🇸', day: 4, startTime: '18:40', endTime: '20:10', type: 'fixed', points: 10, location: '菲尔德校区', teacher: '', schedules: [{day:4,startTime:'18:40',endTime:'20:10'},{day:6,startTime:'10:40',endTime:'12:10'}] },
+  { id: 'c8', name: '菲尔德英语', emoji: '🇺🇸', day: 6, startTime: '10:40', endTime: '12:10', type: 'fixed', points: 10, location: '菲尔德校区', teacher: '', schedules: [{day:4,startTime:'18:40',endTime:'20:10'},{day:6,startTime:'10:40',endTime:'12:10'}] },
+  { id: 'c9', name: '篮球课', emoji: '🏀', day: 6, startTime: '19:00', endTime: '20:30', type: 'fixed', points: 10, location: '体育馆', teacher: '', schedules: [{day:3,startTime:'18:30',endTime:'20:00'},{day:6,startTime:'19:00',endTime:'20:30'}] },
+];
+
+// ============================================================
+// Slot options (30-min intervals from 08:00 to 22:00)
+// ============================================================
+function generateSlotOptions() {
+  const times = [];
+  for (let h = 8; h <= 22; h++) {
+    for (let m = 0; m < 60; m += 30) {
+      if (h === 22 && m > 0) break;
+      times.push(String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0'));
+    }
+  }
+  return times;
+}
+
+const SLOT_OPTIONS = generateSlotOptions();
+
+function populateSlotSelect(selectEl) {
+  if (selectEl.options.length > 0) return;
+  SLOT_OPTIONS.forEach(t => {
+    selectEl.add(new Option(t, t));
+  });
+}
+
+function createSlotSelect(selectedVal) {
+  const sel = document.createElement('select');
+  SLOT_OPTIONS.forEach(t => {
+    const opt = new Option(t, t);
+    if (t === selectedVal) opt.selected = true;
+    sel.add(opt);
+  });
+  return sel;
+}
+
+// ============================================================
+// Data Layer
+// ============================================================
+const STORAGE_KEY = 'zootopia_scheduler';
+const DAY_NAMES = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+const DAY_NAMES_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
+
+// ============================================================
+// Schedules Migration — backward compat for old data format
+// ============================================================
+function migrateSchedules(courses) {
+  courses.forEach(c => {
+    if (!c.schedules || !Array.isArray(c.schedules) || c.schedules.length === 0) {
+      c.schedules = [{ day: c.day, startTime: c.startTime, endTime: c.endTime }];
     }
   });
-});
-
-// ========== 课程表 JS ==========
-
-// ==================== DATA MODEL ====================
-const TIME_SLOTS = [
-  { slot: 1,  start: '08:00', end: '08:45', label: '第1节' },
-  { slot: 2,  start: '08:55', end: '09:40', label: '第2节' },
-  { slot: 3,  start: '10:00', end: '10:45', label: '第3节' },
-  { slot: 4,  start: '10:55', end: '11:40', label: '第4节' },
-  { slot: 5,  start: '14:00', end: '14:45', label: '第5节' },
-  { slot: 6,  start: '14:55', end: '15:40', label: '第6节' },
-  { slot: 7,  start: '16:00', end: '16:45', label: '第7节' },
-  { slot: 8,  start: '19:00', end: '20:30', label: '晚课' },
-];
-
-var DAYS = ['周一', '周二', '周三', '周四', '周五', '周六'];
-var DAYS_FULL = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-
-var COURSE_TYPES = {
-  'math':     { name: '数学类', dot: 'math' },
-  'english':  { name: '外语类', dot: 'english' },
-  'cs':       { name: '计算机类', dot: 'cs' },
-  'physics':  { name: '物理类', dot: 'physics' },
-  'pe':       { name: '体育类', dot: 'pe' },
-  'politics': { name: '思政类', dot: 'politics' },
-  'elective': { name: '选修课', dot: 'elective' },
-  'default':  { name: '其他', dot: '' },
-};
-
-function detectType(name) {
-  if (/数学|线性|代数|高数|概率|微积分|几何/.test(name)) return 'math';
-  if (/英语|外语|英文/.test(name)) return 'english';
-  if (/C语言|程序|数据|算法|计算|编程|Java|Python|C\+\+|软件|网络|数据库/.test(name)) return 'cs';
-  if (/物理|力学|电磁|光学/.test(name)) return 'physics';
-  if (/体育|篮球|足球|排球|游泳|健美|武术|太极/.test(name)) return 'pe';
-  if (/马克思|毛概|思政|思修|近代史|形势/.test(name)) return 'politics';
-  if (/摄影|艺术|音乐|书法|选修|鉴赏/.test(name)) return 'elective';
-  return 'default';
+  return courses;
 }
 
-// Default sample courses
-var DEFAULT_COURSES = [
-  // 周一
-  { id: 'c1',  name: '高等数学',   teacher: '王教授', location: 'A教301', day: 0, startSlot: 1, endSlot: 2, weekType: 'all' },
-  { id: 'c2',  name: '大学英语',   teacher: '李老师', location: 'B教205', day: 0, startSlot: 3, endSlot: 4, weekType: 'all' },
-  { id: 'c3',  name: 'C语言程序设计', teacher: '张老师', location: '机房A',  day: 0, startSlot: 5, endSlot: 6, weekType: 'all' },
-  // 周二
-  { id: 'c4',  name: '线性代数',   teacher: '刘教授', location: 'A教402', day: 1, startSlot: 1, endSlot: 2, weekType: 'all' },
-  { id: 'c5',  name: '大学物理',   teacher: '陈教授', location: 'C教101', day: 1, startSlot: 3, endSlot: 4, weekType: 'all' },
-  { id: 'c6',  name: '体育',       teacher: '赵老师', location: '体育馆',  day: 1, startSlot: 5, endSlot: 6, weekType: 'all' },
-  // 周三
-  { id: 'c7',  name: '高等数学',   teacher: '王教授', location: 'A教301', day: 2, startSlot: 1, endSlot: 2, weekType: 'all' },
-  { id: 'c8',  name: '大学英语',   teacher: '李老师', location: 'B教205', day: 2, startSlot: 3, endSlot: 4, weekType: 'all' },
-  { id: 'c9',  name: '马克思主义原理', teacher: '周老师', location: 'D教303', day: 2, startSlot: 5, endSlot: 6, weekType: 'all' },
-  { id: 'c10', name: '数据结构',   teacher: '张老师', location: '机房B',  day: 2, startSlot: 8, endSlot: 8, weekType: 'even' },
-  // 周四
-  { id: 'c11', name: '线性代数',   teacher: '刘教授', location: 'A教402', day: 3, startSlot: 1, endSlot: 2, weekType: 'all' },
-  { id: 'c12', name: 'C语言程序设计', teacher: '张老师', location: '机房A',  day: 3, startSlot: 3, endSlot: 4, weekType: 'all' },
-  { id: 'c13', name: '大学物理',   teacher: '陈教授', location: 'C教101', day: 3, startSlot: 5, endSlot: 6, weekType: 'all' },
-  { id: 'c14', name: '摄影艺术',   teacher: '吴老师', location: '艺教201', day: 3, startSlot: 7, endSlot: 7, weekType: 'all' },
-  // 周五
-  { id: 'c15', name: '高等数学',   teacher: '王教授', location: 'A教301', day: 4, startSlot: 1, endSlot: 2, weekType: 'all' },
-  { id: 'c16', name: '大学物理',   teacher: '陈教授', location: 'C教101', day: 4, startSlot: 3, endSlot: 4, weekType: 'all' },
-  { id: 'c17', name: '马克思主义原理', teacher: '周老师', location: 'D教303', day: 4, startSlot: 5, endSlot: 6, weekType: 'all' },
-  { id: 'c18', name: '体育',       teacher: '赵老师', location: '体育馆',  day: 4, startSlot: 7, endSlot: 7, weekType: 'all' },
-  // 周六
-  { id: 'c19', name: '数据结构',   teacher: '张老师', location: '机房B',  day: 5, startSlot: 1, endSlot: 2, weekType: 'even' },
-  { id: 'c20', name: '摄影艺术',   teacher: '吴老师', location: '艺教201', day: 5, startSlot: 3, endSlot: 4, weekType: 'all' },
-];
-
-// ==================== STATE ====================
-var STORAGE_KEY = 'schedule_app_v2';
-var courses = [];
-var currentWeek = 1;
-var currentWeekParity = 'odd';
-var userWeekOverride = null;
-var currentPage = 0;
-var currentDetailCourse = null;
-var editingCourse = null;
-var refreshTimer = null;
-
-// ==================== PERSISTENCE ====================
-function loadState() {
+function loadData() {
   try {
-    var raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      var data = JSON.parse(raw);
-      courses = data.courses || [];
-      userWeekOverride = data.userWeekOverride || null;
-    }
-  } catch(e) {}
-  if (!courses || courses.length === 0) {
-    courses = JSON.parse(JSON.stringify(DEFAULT_COURSES));
-  }
-}
-
-function saveState() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      courses: courses,
-      userWeekOverride: userWeekOverride,
-    }));
-  } catch(e) {}
-}
-
-// ==================== WEEK CALC ====================
-var SEMESTER_START = new Date(2026, 1, 23); // Feb 23, 2026 (Monday)
-
-function getAcademicWeek() {
-  var now = new Date();
-  var diff = now.getTime() - SEMESTER_START.getTime();
-  var weekNum = Math.floor(diff / (7 * 24 * 60 * 60 * 1000)) + 1;
-  return Math.max(1, Math.min(20, weekNum));
-}
-
-function getEffectiveWeekParity() {
-  if (userWeekOverride) return userWeekOverride;
-  currentWeek = getAcademicWeek();
-  return currentWeek % 2 === 1 ? 'odd' : 'even';
-}
-
-function toggleWeek() {
-  var current = getEffectiveWeekParity();
-  userWeekOverride = (current === 'odd') ? 'even' : 'odd';
-  saveState();
-  refreshAll();
-  showToast(userWeekOverride === 'odd' ? '已切换到单周' : '已切换到双周');
-}
-
-// ==================== TIME HELPERS ====================
-function nowMinutes() {
-  var n = new Date();
-  return n.getHours() * 60 + n.getMinutes();
-}
-
-function todayDayIndex() {
-  var d = new Date().getDay();
-  if (d === 0) return -1;
-  return d - 1; // 0=Mon ... 5=Sat
-}
-
-function getCurrentSlot() {
-  var m = nowMinutes();
-  var slotDefs = [
-    { s: 1, start: 480,  end: 525  },
-    { s: 2, start: 535,  end: 580  },
-    { s: 3, start: 600,  end: 645  },
-    { s: 4, start: 655,  end: 700  },
-    { s: 5, start: 840,  end: 885  },
-    { s: 6, start: 895,  end: 940  },
-    { s: 7, start: 960,  end: 1005 },
-    { s: 8, start: 1140, end: 1230 },
-  ];
-  for (var i = 0; i < slotDefs.length; i++) {
-    if (m >= slotDefs[i].start && m <= slotDefs[i].end) return slotDefs[i].s;
-  }
-  if (m < slotDefs[0].start) return -1;
-  if (m > slotDefs[slotDefs.length-1].end) return -2;
-  return 0;
-}
-
-function formatDate(d) {
-  return d.getFullYear() + '年' + String(d.getMonth()+1).padStart(2,'0') + '月' + String(d.getDate()).padStart(2,'0') + '日';
-}
-
-function getSlotTime(slot) {
-  var s = TIME_SLOTS.find(function(t) { return t.slot === slot; });
-  return s ? s.start + '-' + s.end : '';
-}
-
-function getCoursesForDay(dayIndex) {
-  var parity = getEffectiveWeekParity();
-  return courses.filter(function(c) {
-    if (c.day !== dayIndex) return false;
-    if (c.weekType === 'all') return true;
-    return c.weekType === parity;
-  }).sort(function(a, b) { return a.startSlot - b.startSlot; });
-}
-
-function getCourseTypeClass(course) {
-  return 'type-' + detectType(course.name);
-}
-
-function getCourseTypeInfo(course) {
-  return COURSE_TYPES[detectType(course.name)] || COURSE_TYPES['default'];
-}
-
-// ==================== RENDER ====================
-function refreshAll() {
-  currentWeek = getAcademicWeek();
-  currentWeekParity = getEffectiveWeekParity();
-  renderHeader();
-  renderNextBar();
-  renderToday();
-  if (currentPage === 1) renderTable();
-  if (currentPage === 2) renderStats();
-  renderWeekBadge();
-}
-
-function renderHeader() {
-  var now = new Date();
-  document.getElementById('headerDate').textContent = formatDate(now);
-  var dayIdx = todayDayIndex();
-  var dayName = dayIdx >= 0 ? DAYS_FULL[dayIdx] : '星期日';
-  document.getElementById('headerSub').textContent = dayName + ' · 第' + currentWeek + '周 · ' + (currentWeekParity==='odd'?'单周':'双周');
-}
-
-function renderWeekBadge() {
-  var parity = getEffectiveWeekParity();
-  var badge = document.getElementById('weekBadge');
-  var icon = document.getElementById('weekIcon');
-  var label = document.getElementById('weekLabel');
-  label.textContent = '第' + currentWeek + '周';
-  if (parity === 'odd') {
-    icon.textContent = '🔵';
-    badge.className = 'week-badge';
-  } else {
-    icon.textContent = '🟠';
-    badge.className = 'week-badge even';
-  }
-}
-
-function renderNextBar() {
-  var bar = document.getElementById('nextBar');
-  var info = document.getElementById('nextInfo');
-  var time = document.getElementById('nextTime');
-  var dayIdx = todayDayIndex();
-
-  if (dayIdx < 0 || dayIdx > 5) {
-    bar.style.display = 'none';
-    return;
-  }
-
-  var parity = getEffectiveWeekParity();
-  var curSlot = getCurrentSlot();
-  var nextCourse = null;
-  var nextDayOffset = 0;
-
-  // Find next course today
-  var todayCourses = courses.filter(function(c) {
-    if (c.day !== dayIdx) return false;
-    if (c.weekType !== 'all' && c.weekType !== parity) return false;
-    return c.startSlot > curSlot;
-  }).sort(function(a, b) { return a.startSlot - b.startSlot; });
-
-  if (todayCourses.length > 0) {
-    nextCourse = todayCourses[0];
-  } else {
-    // Search upcoming days
-    for (var offset = 1; offset <= 7; offset++) {
-      var checkDay = (dayIdx + offset) % 7;
-      if (checkDay > 5) continue;
-      var dayCourses = courses.filter(function(c) {
-        if (c.day !== checkDay) return false;
-        if (c.weekType !== 'all' && c.weekType !== parity) return false;
-        return true;
-      }).sort(function(a, b) { return a.startSlot - b.startSlot; });
-      if (dayCourses.length > 0) {
-        nextCourse = dayCourses[0];
-        nextDayOffset = offset;
-        break;
+      const data = JSON.parse(raw);
+      if (data.courses && data.checkins && typeof data.settings === 'object') {
+        data.courses = migrateSchedules(data.courses);
+        data.courses = migrateToGroups(data.courses);
+        // Ensure pointsShop exists
+        if (!data.pointsShop) {
+          data.pointsShop = { settlements: [] };
+        }
+        return data;
       }
     }
-  }
-
-  if (!nextCourse) {
-    bar.style.display = 'none';
-    return;
-  }
-
-  bar.style.display = 'flex';
-  info.textContent = nextCourse.name;
-  var dayLabel = nextDayOffset === 0 ? '今天' : (nextDayOffset === 1 ? '明天' : DAYS[(dayIdx + nextDayOffset) % 7]);
-  time.textContent = dayLabel + ' ' + getSlotTime(nextCourse.startSlot);
+  } catch (e) { /* fall through */ }
+  return {
+    courses: migrateToGroups(migrateSchedules(JSON.parse(JSON.stringify(DEFAULT_COURSES)))),
+    checkins: [],
+    settings: { password: '123456' },
+    pointsShop: { settlements: [] }
+  };
 }
 
-function renderToday() {
-  var timeline = document.getElementById('timeline');
-  var empty = document.getElementById('todayEmpty');
-  var dayIdx = todayDayIndex();
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
 
-  if (dayIdx < 0 || dayIdx > 5) {
-    timeline.innerHTML = '';
-    empty.style.display = 'block';
-    empty.querySelector('.msg').textContent = '今天是周日，没有课程安排';
-    empty.querySelector('.sub').textContent = '好好享受周末吧 🌤️';
-    return;
+let appData = loadData();
+
+// ============================================================
+// Group Migration — auto-group flat courses by logical identity
+// ============================================================
+function migrateToGroups(courses) {
+  if (courses.length > 0 && courses[0].groupId) return courses;
+
+  const groups = {};
+  courses.forEach(c => {
+    const key = `${c.name}||${c.emoji}||${c.type}||${c.points}||${c.location||''}||${c.teacher||''}`;
+    if (!groups[key]) {
+      groups[key] = {
+        groupId: 'g_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8),
+        entries: []
+      };
+    }
+    groups[key].entries.push(c);
+  });
+
+  Object.values(groups).forEach(g => {
+    g.entries.forEach(c => { c.groupId = g.groupId; });
+  });
+
+  return courses;
+}
+
+// ============================================================
+// Group Helpers — compute course groups from the flat list
+// ============================================================
+function getCourseGroups() {
+  const map = {};
+  appData.courses.forEach(c => {
+    const gid = c.groupId || c.id;
+    if (!map[gid]) {
+      map[gid] = {
+        groupId: gid,
+        name: c.name,
+        emoji: c.emoji,
+        type: c.type,
+        points: c.points,
+        location: c.location || '',
+        teacher: c.teacher || '',
+        weekType: c.weekType || 'every',
+        schedules: (c.schedules && c.schedules.length > 0)
+          ? JSON.parse(JSON.stringify(c.schedules))
+          : [{ day: c.day, startTime: c.startTime, endTime: c.endTime }],
+        days: []
+      };
+    }
+    // Merge schedules from this entry
+    if (c.schedules && c.schedules.length > 0) {
+      c.schedules.forEach(s => {
+        const exists = map[gid].schedules.find(es => es.day === s.day);
+        if (!exists) {
+          map[gid].schedules.push({ day: s.day, startTime: s.startTime, endTime: s.endTime });
+        }
+      });
+    }
+    if (!map[gid].days.includes(c.day)) {
+      map[gid].days.push(c.day);
+    }
+  });
+  // Sort schedules and days within each group
+  Object.values(map).forEach(g => {
+    g.days.sort((a, b) => a - b);
+    g.schedules.sort((a, b) => a.day - b.day);
+    // Deduplicate schedules by day
+    const seenDays = new Set();
+    g.schedules = g.schedules.filter(s => {
+      if (seenDays.has(s.day)) return false;
+      seenDays.add(s.day);
+      return true;
+    });
+  });
+  // Sort groups: fixed first, then by name
+  return Object.values(map).sort((a, b) => {
+    if (a.type !== b.type) return a.type === 'fixed' ? -1 : 1;
+    return a.name.localeCompare(b.name, 'zh');
+  });
+}
+
+function getScheduleForDay(group, day) {
+  const s = group.schedules.find(s => s.day === day);
+  return s || (group.schedules.length > 0 ? group.schedules[0] : null);
+}
+
+function schedulesToSummary(group) {
+  if (!group.schedules || group.schedules.length === 0) {
+    return daysToSummary(group.days) + ' 未设置时间';
   }
+  // Group by time pattern
+  const timeMap = {}; // key: startTime-endTime -> [days]
+  group.schedules.forEach(s => {
+    const timeKey = s.startTime + '-' + s.endTime;
+    if (!timeMap[timeKey]) timeMap[timeKey] = [];
+    timeMap[timeKey].push(s.day);
+  });
 
-  var todayCourses = getCoursesForDay(dayIdx);
-  if (todayCourses.length === 0) {
-    timeline.innerHTML = '';
-    empty.style.display = 'block';
-    empty.querySelector('.msg').textContent = '今天没有课程安排';
-    empty.querySelector('.sub').textContent = '好好休息一下吧 ☕';
-    return;
-  }
+  const parts = [];
+  Object.entries(timeMap).forEach(([timeKey, days]) => {
+    const [st, et] = timeKey.split('-');
+    const dayStr = daysToSummary(days.sort((a,b) => a-b));
+    parts.push(dayStr + ' ' + st + '-' + et);
+  });
+  return parts.join('；');
+}
 
-  empty.style.display = 'none';
-  var curSlot = getCurrentSlot();
-  var allSlots = [1,2,3,4,5,6,7,8];
-  var html = '';
+function daysToSummary(days) {
+  if (days.length === 0) return '未设置日期';
+  if (days.length === 7) return '每天';
 
-  for (var si = 0; si < allSlots.length; si++) {
-    var slot = allSlots[si];
-    var slotInfo = TIME_SLOTS.find(function(t) { return t.slot === slot; });
-    var course = todayCourses.find(function(c) { return c.startSlot <= slot && c.endSlot >= slot; });
+  const sorted = [...days].sort((a, b) => a - b);
+  const ranges = [];
+  let start = sorted[0];
+  let end = sorted[0];
 
-    if (course && course.startSlot === slot) {
-      var span = course.endSlot - course.startSlot + 1;
-      var endSlotInfo = TIME_SLOTS.find(function(t) { return t.slot === course.endSlot; });
-      var isNow = curSlot > 0 && curSlot >= course.startSlot && curSlot <= course.endSlot;
-      var typeClass = getCourseTypeClass(course);
-      var weekLabel = course.weekType !== 'all' ? (course.weekType === 'even' ? '双周' : '单周') : '';
-      var electiveLabel = detectType(course.name) === 'elective' ? '选修' : '';
-      var cid = course.id;
-
-      html += '<div class="timeline-item">' +
-        '<div class="time-col">' +
-          '<div class="start">' + slotInfo.start + '</div>' +
-          '<div class="end">' + (endSlotInfo ? endSlotInfo.end : slotInfo.end) + '</div>' +
-          '<div class="slot-num">' + span + '课时</div>' +
-        '</div>' +
-        '<div class="course-card ' + typeClass + (isNow?' now':'') + '" onclick="window.showDetail(\'' + cid + '\')">' +
-          (isNow ? '<span class="badge-now">正在进行</span>' : '') +
-          (weekLabel ? '<span class="badge badge-week">' + weekLabel + '</span>' : '') +
-          (electiveLabel ? '<span class="badge badge-elective">' + electiveLabel + '</span>' : '') +
-          '<div class="name">' + course.name + '</div>' +
-          '<div class="meta">' +
-            '<span>👨‍🏫 ' + escapeHtml(course.teacher) + '</span>' +
-            '<span>📍 ' + escapeHtml(course.location) + '</span>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-    } else if (!course) {
-      html += '<div class="timeline-item" style="opacity:.3;">' +
-        '<div class="time-col">' +
-          '<div class="start">' + slotInfo.start + '</div>' +
-          '<div class="end">' + slotInfo.end + '</div>' +
-          '<div class="slot-num">' + slotInfo.label + '</div>' +
-        '</div>' +
-        '<div class="course-card" style="border-left-color:transparent;background:transparent;box-shadow:none;min-height:44px;cursor:default;padding:10px 16px;">' +
-          '<div class="name" style="color:var(--text-muted);font-weight:400;font-size:12px;">空闲</div>' +
-        '</div>' +
-      '</div>';
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i] === end + 1) {
+      end = sorted[i];
+    } else {
+      ranges.push([start, end]);
+      start = sorted[i];
+      end = sorted[i];
     }
   }
+  ranges.push([start, end]);
 
-  timeline.innerHTML = html;
+  return ranges.map(([s, e]) => {
+    if (s === e) return DAY_NAMES[s];
+    return DAY_NAMES[s] + '至' + DAY_NAMES[e];
+  }).join('、');
 }
 
-function renderTable() {
-  var container = document.getElementById('tableScroll');
-  var dayIdx = todayDayIndex();
-  var curSlot = getCurrentSlot();
-  var parity = getEffectiveWeekParity();
+// ============================================================
+// Week Number Helpers (for odd/even week filtering)
+// ============================================================
+function getWeekNumber(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
 
-  var html = '<table class="schedule"><thead><tr><th></th>';
-  for (var d = 0; d < 6; d++) {
-    var isToday = d === dayIdx;
-    html += '<th class="' + (isToday ? 'today-col' : '') + '">' + DAYS[d] + (isToday ? ' 📍' : '') + '</th>';
-  }
-  html += '</tr></thead><tbody>';
+function getCurrentWeekLabel() {
+  const wn = getWeekNumber(new Date());
+  return wn + '（' + (wn % 2 === 1 ? '单周' : '双周') + '）';
+}
 
-  for (var si = 0; si < TIME_SLOTS.length; si++) {
-    var slot = TIME_SLOTS[si];
-    html += '<tr>';
-    html += '<td class="time-cell">' + slot.start + '<br><span class="slot-label">' + slot.label + '</span></td>';
+function isCurrentWeekMatch(weekType) {
+  if (!weekType || weekType === 'every') return true;
+  const weekNum = getWeekNumber(new Date());
+  if (weekType === 'odd') return weekNum % 2 === 1;
+  if (weekType === 'even') return weekNum % 2 === 0;
+  return true;
+}
 
-    for (var d = 0; d < 6; d++) {
-      var isToday = d === dayIdx;
-      var course = null;
-      for (var ci = 0; ci < courses.length; ci++) {
-        var c = courses[ci];
-        if (c.day === d && c.startSlot <= slot.slot && c.endSlot >= slot.slot &&
-            (c.weekType === 'all' || c.weekType === parity)) {
-          course = c;
+// ============================================================
+// Course queries (updated with weekType support)
+// ============================================================
+function getCoursesForDay(day) {
+  return appData.courses.filter(c => c.day === day && isCurrentWeekMatch(c.weekType || 'every'));
+}
+
+function getTodayDay() {
+  return new Date().getDay();
+}
+
+function getDateStr(date) {
+  const d = date || new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getTodayStr() {
+  return getDateStr();
+}
+
+function getTodayCourses() {
+  return getCoursesForDay(getTodayDay());
+}
+
+// ============================================================
+// Check-in Logic
+// ============================================================
+function isCheckedIn(courseId, dateStr) {
+  return appData.checkins.some(c => c.courseId === courseId && c.date === dateStr);
+}
+
+function getCheckinsForDate(dateStr) {
+  return appData.checkins.filter(c => c.date === dateStr);
+}
+
+function checkIn(courseId) {
+  const dateStr = getTodayStr();
+  if (isCheckedIn(courseId, dateStr)) return false;
+
+  appData.checkins.push({
+    courseId,
+    date: dateStr,
+    timestamp: Date.now()
+  });
+  saveData(appData);
+  return true;
+}
+
+function undoCheckIn(courseId) {
+  const dateStr = getTodayStr();
+  const idx = appData.checkins.findIndex(c => c.courseId === courseId && c.date === dateStr);
+  if (idx === -1) return false;
+  appData.checkins.splice(idx, 1);
+  saveData(appData);
+  return true;
+}
+
+// ============================================================
+// Points & Streak Calculation
+// ============================================================
+function calculateStreak() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const checkinDates = new Set();
+  appData.checkins.forEach(c => checkinDates.add(c.date));
+
+  let streak = 0;
+  const d = new Date(today);
+  const todayStr = getDateStr(d);
+
+  if (!checkinDates.has(todayStr)) {
+    d.setDate(d.getDate() - 1);
+    const yesterdayStr = getDateStr(d);
+    if (checkinDates.has(yesterdayStr)) {
+      streak = 1;
+      d.setDate(d.getDate() - 1);
+      while (true) {
+        const s = getDateStr(d);
+        if (checkinDates.has(s)) {
+          streak++;
+          d.setDate(d.getDate() - 1);
+        } else {
           break;
         }
       }
-
-      var tdClass = [];
-      if (isToday) tdClass.push('today-col');
-      if (course) tdClass.push('has-course');
-      var isCurSlot = isToday && curSlot > 0 && curSlot >= slot.slot && curSlot <= slot.slot;
-
-      html += '<td class="' + tdClass.join(' ') + '"' + (course ? ' onclick="window.showDetail(\'' + course.id + '\')"' : '') + '>';
-      if (course && course.startSlot === slot.slot) {
-        var typeClass = getCourseTypeClass(course);
-        var weekLabel = course.weekType !== 'all' ? ' [' + (course.weekType==='even'?'双':'单') + '周]' : '';
-        html += '<div class="mini-course ' + typeClass + (isCurSlot?' now-slot':'') + '">' +
-          course.name + weekLabel +
-          '<div class="mini-meta">' + escapeHtml(course.teacher) + ' · ' + escapeHtml(course.location) + '</div>' +
-        '</div>';
-      } else if (course) {
-        var tc = getCourseTypeClass(course);
-        html += '<div class="mini-course ' + tc + (isCurSlot?' now-slot':'') + '" style="opacity:.5;font-size:9px;padding:2px 4px;">↳</div>';
-      }
-      html += '</td>';
     }
-    html += '</tr>';
+    return streak;
   }
 
-  html += '</tbody></table>';
-  container.innerHTML = html;
-
-  // Scroll to today column
-  if (dayIdx >= 0) {
-    setTimeout(function() {
-      var table = container.querySelector('table');
-      if (table) {
-        var ths = table.querySelectorAll('thead th');
-        if (ths[dayIdx + 1]) {
-          ths[dayIdx + 1].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-      }
-    }, 150);
-  }
-}
-
-function renderStats() {
-  var container = document.getElementById('statsContent');
-  var parity = getEffectiveWeekParity();
-  var activeCourses = courses.filter(function(c) { return c.weekType === 'all' || c.weekType === parity; });
-
-  var typeCount = {};
-  var totalSlots = 0;
-  activeCourses.forEach(function(c) {
-    var t = detectType(c.name);
-    typeCount[t] = (typeCount[t] || 0) + 1;
-    totalSlots += (c.endSlot - c.startSlot + 1);
-  });
-
-  var uniqueNames = new Set(activeCourses.map(function(c) { return c.name; })).size;
-
-  var html = '' +
-    '<div class="stats-grid">' +
-      '<div class="stat-card"><div class="stat-val">' + activeCourses.length + '</div><div class="stat-label">课程门次</div></div>' +
-      '<div class="stat-card"><div class="stat-val">' + uniqueNames + '</div><div class="stat-label">不同课程</div></div>' +
-      '<div class="stat-card"><div class="stat-val">' + totalSlots + '</div><div class="stat-label">周课时</div></div>' +
-      '<div class="stat-card"><div class="stat-val">' + (currentWeekParity==='odd'?'单':'双') + '</div><div class="stat-label">当前周型</div></div>' +
-    '</div>' +
-    '<div class="stats-section"><h3>📂 按课程类型</h3><div class="type-list">';
-
-  var typeOrder = ['math','english','cs','physics','pe','politics','elective'];
-  for (var ti = 0; ti < typeOrder.length; ti++) {
-    var t = typeOrder[ti];
-    if (typeCount[t]) {
-      var info = COURSE_TYPES[t];
-      html += '<div class="type-row"><div class="type-dot ' + info.dot + '"></div><span class="type-name">' + info.name + '</span><span class="type-count">' + typeCount[t] + '门</span></div>';
+  streak = 1;
+  d.setDate(d.getDate() - 1);
+  while (true) {
+    const s = getDateStr(d);
+    if (checkinDates.has(s)) {
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
     }
   }
+  return streak;
+}
 
-  // Teacher stats
-  var teacherCount = {};
-  activeCourses.forEach(function(c) {
-    teacherCount[c.teacher] = (teacherCount[c.teacher] || 0) + 1;
+function getTotalPoints() {
+  let total = 0;
+  appData.checkins.forEach(c => {
+    const course = appData.courses.find(co => co.id === c.courseId);
+    if (course) total += course.points || 0;
   });
-  var teachers = Object.entries(teacherCount).sort(function(a,b) { return b[1]-a[1]; });
-
-  html += '</div></div><div class="stats-section"><h3>👨‍🏫 授课教师</h3><div class="type-list">';
-  for (var i = 0; i < teachers.length; i++) {
-    html += '<div class="type-row"><span style="font-size:18px;">👤</span><span class="type-name">' + teachers[i][0] + '</span><span class="type-count">' + teachers[i][1] + '门课</span></div>';
-  }
-  html += '</div></div>';
-
-  // Day distribution
-  html += '<div class="stats-section"><h3>📅 每日课程分布</h3><div class="type-list">';
-  var dayNums = ['一','二','三','四','五','六'];
-  for (var d = 0; d < 6; d++) {
-    var dayCourses = activeCourses.filter(function(c) { return c.day === d; });
-    html += '<div class="type-row"><span style="font-size:15px;width:28px;text-align:center;font-weight:600;">' + dayNums[d] + '</span><span class="type-name">' + DAYS[d] + '</span><span class="type-count">' + dayCourses.length + '门</span></div>';
-  }
-  html += '</div></div>';
-
-  // Action buttons
-  html += '<div style="margin-top:20px;display:flex;gap:10px;">' +
-    '<button class="btn btn-primary" onclick="window.addNewCourse()" style="flex:1;">➕ 添加课程</button>' +
-    '<button class="btn btn-secondary" onclick="window.resetData()" style="flex:1;">🔄 恢复默认</button>' +
-  '</div>';
-
-  container.innerHTML = html;
+  return total;
 }
 
-// ==================== DETAIL MODAL ====================
-function showDetail(courseId) {
-  var course = courses.find(function(c) { return c.id === courseId; });
-  if (!course) return;
-  window.currentDetailCourse = course;
-  currentDetailCourse = course;
-
-  var typeInfo = getCourseTypeInfo(course);
-  var parity = getEffectiveWeekParity();
-  var weekStr = course.weekType === 'all' ? '每周' : (course.weekType === 'odd' ? '单周' : '双周');
-  var slotStr;
-  if (course.startSlot === course.endSlot) {
-    slotStr = '第' + course.startSlot + '节 ' + getSlotTime(course.startSlot);
-  } else {
-    var endT = TIME_SLOTS.find(function(t) { return t.slot === course.endSlot; });
-    slotStr = '第' + course.startSlot + '-' + course.endSlot + '节 ' + getSlotTime(course.startSlot) + '-' + (endT ? endT.end : '');
+function getStreakBonusTotal() {
+  let bonus = 0;
+  const checkinDates = [...new Set(appData.checkins.map(c => c.date))].sort();
+  if (checkinDates.length >= 2) {
+    let stretch = 1;
+    let lastDate = new Date(checkinDates[0] + 'T00:00:00');
+    for (let i = 1; i < checkinDates.length; i++) {
+      const cd = new Date(checkinDates[i] + 'T00:00:00');
+      const diff = Math.round((cd - lastDate) / (1000 * 60 * 60 * 24));
+      if (diff === 1) {
+        stretch++;
+        if (stretch === 3) bonus += 5;
+        if (stretch === 7) bonus += 20;
+      } else {
+        stretch = 1;
+      }
+      lastDate = cd;
+    }
   }
-  var isActiveNow = course.weekType === 'all' || course.weekType === parity;
-
-  document.getElementById('detailTitle').textContent = course.name;
-  document.getElementById('detailBody').innerHTML =
-    '<div class="detail-row"><span class="detail-icon">🏷️</span><div><div class="detail-label">课程类型</div><div class="detail-val">' + typeInfo.name + '</div></div></div>' +
-    '<div class="detail-row"><span class="detail-icon">👨‍🏫</span><div><div class="detail-label">授课教师</div><div class="detail-val">' + escapeHtml(course.teacher) + '</div></div></div>' +
-    '<div class="detail-row"><span class="detail-icon">📍</span><div><div class="detail-label">上课地点</div><div class="detail-val">' + escapeHtml(course.location) + '</div></div></div>' +
-    '<div class="detail-row"><span class="detail-icon">📅</span><div><div class="detail-label">上课时间</div><div class="detail-val">' + DAYS[course.day] + ' ' + slotStr + '</div></div></div>' +
-    '<div class="detail-row"><span class="detail-icon">🔄</span><div><div class="detail-label">周次</div><div class="detail-val">' + weekStr + ' ' + (isActiveNow ? '✅ 本周有课' : '⏸️ 本周无课') + '</div></div></div>';
-
-  document.getElementById('detailOverlay').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  return bonus;
 }
 
-function closeDetail(e) {
-  if (e && e.target !== document.getElementById('detailOverlay')) return;
-  document.getElementById('detailOverlay').style.display = 'none';
-  document.body.style.overflow = '';
-  currentDetailCourse = null;
-  window.currentDetailCourse = null;
+// ============================================================
+// Form State (for multi-select days, per-day times & week type)
+// ============================================================
+let _formSelectedDays = [];
+let _formDayTimes = {};   // { day: { startTime, endTime } }
+let _formWeekType = 'every';
+let _formCourseType = 'fixed';
+
+function setFormDays(days) {
+  _formSelectedDays = [...days];
+  document.querySelectorAll('#fDays .day-toggle').forEach(el => {
+    const d = parseInt(el.dataset.day);
+    el.classList.toggle('selected', _formSelectedDays.includes(d));
+  });
+  renderScheduleTimeRows();
 }
 
-// ==================== EDIT MODAL ====================
-function openEdit(course) {
-  if (!course) return;
-  editingCourse = JSON.parse(JSON.stringify(course));
-  document.getElementById('detailOverlay').style.display = 'none';
-
-  var dayOptions = '';
-  for (var i = 0; i < DAYS.length; i++) {
-    dayOptions += '<option value="' + i + '"' + (course.day===i?' selected':'') + '>' + DAYS[i] + '</option>';
-  }
-  var slotOptions = '';
-  for (var j = 0; j < TIME_SLOTS.length; j++) {
-    var t = TIME_SLOTS[j];
-    slotOptions += '<option value="' + t.slot + '"' + (course.startSlot===t.slot?' selected':'') + '>第' + t.slot + '节 ' + t.start + '-' + t.end + '</option>';
-  }
-  var endSlotOptions = '';
-  for (var k = 0; k < TIME_SLOTS.length; k++) {
-    var te = TIME_SLOTS[k];
-    endSlotOptions += '<option value="' + te.slot + '"' + (course.endSlot===te.slot?' selected':'') + '>第' + te.slot + '节 ' + te.start + '-' + te.end + '</option>';
-  }
-
-  document.getElementById('editTitle').textContent = '编辑课程';
-  document.getElementById('editBody').innerHTML =
-    '<div class="form-group"><label>课程名称</label><input type="text" id="editName" value="' + escapeHtml(course.name) + '"></div>' +
-    '<div class="form-group"><label>授课教师</label><input type="text" id="editTeacher" value="' + escapeHtml(course.teacher) + '"></div>' +
-    '<div class="form-group"><label>上课地点</label><input type="text" id="editLocation" value="' + escapeHtml(course.location) + '"></div>' +
-    '<div class="form-group"><label>星期</label><select id="editDay">' + dayOptions + '</select></div>' +
-    '<div class="form-group"><label>开始节次</label><select id="editStart">' + slotOptions + '</select></div>' +
-    '<div class="form-group"><label>结束节次</label><select id="editEnd">' + endSlotOptions + '</select></div>' +
-    '<div class="form-group"><label>周次类型</label><select id="editWeekType">' +
-      '<option value="all"' + (course.weekType==='all'?' selected':'') + '>每周</option>' +
-      '<option value="odd"' + (course.weekType==='odd'?' selected':'') + '>单周</option>' +
-      '<option value="even"' + (course.weekType==='even'?' selected':'') + '>双周</option>' +
-    '</select></div>' +
-    '<div class="btn-row">' +
-      '<button class="btn btn-secondary" onclick="window.closeEdit()">取消</button>' +
-      '<button class="btn btn-primary" onclick="window.saveEdit()">💾 保存</button>' +
-    '</div>';
-
-  document.getElementById('editOverlay').style.display = 'flex';
-}
-
-function closeEdit(e) {
-  if (e && e.target !== document.getElementById('editOverlay')) return;
-  document.getElementById('editOverlay').style.display = 'none';
-  document.body.style.overflow = '';
-  editingCourse = null;
-}
-
-function saveEdit() {
-  var nameEl = document.getElementById('editName');
-  var teacherEl = document.getElementById('editTeacher');
-  var locationEl = document.getElementById('editLocation');
-  if (!nameEl || !teacherEl || !locationEl) return;
-
-  var name = nameEl.value.trim();
-  var teacher = teacherEl.value.trim();
-  var location = locationEl.value.trim();
-  var day = parseInt(document.getElementById('editDay').value);
-  var startSlot = parseInt(document.getElementById('editStart').value);
-  var endSlot = parseInt(document.getElementById('editEnd').value);
-  var weekType = document.getElementById('editWeekType').value;
-
-  if (!name) { showToast('请输入课程名称'); return; }
-  if (endSlot < startSlot) { showToast('结束节次不能早于开始节次'); return; }
-
-  var idx = courses.findIndex(function(c) { return c.id === editingCourse.id; });
+function toggleDay(day) {
+  const idx = _formSelectedDays.indexOf(day);
   if (idx >= 0) {
-    courses[idx] = {
-      id: courses[idx].id,
-      name: name,
-      teacher: teacher,
-      location: location,
-      day: day,
-      startSlot: startSlot,
-      endSlot: endSlot,
-      weekType: weekType,
-    };
+    _formSelectedDays.splice(idx, 1);
+    delete _formDayTimes[day];
+  } else {
+    _formSelectedDays.push(day);
+    _formSelectedDays.sort((a, b) => a - b);
+    // Default time for new day: copy from first selected day, or use 13:30-16:30
+    if (_formSelectedDays.length === 1) {
+      _formDayTimes[day] = { startTime: '13:30', endTime: '16:30' };
+    } else {
+      const firstDay = _formSelectedDays[0];
+      if (_formDayTimes[firstDay]) {
+        _formDayTimes[day] = { ..._formDayTimes[firstDay] };
+      } else {
+        _formDayTimes[day] = { startTime: '13:30', endTime: '16:30' };
+      }
+    }
   }
-
-  saveState();
-  closeEdit();
-  refreshAll();
-  showToast('课程已更新 ✅');
+  // Update visual
+  document.querySelectorAll('#fDays .day-toggle').forEach(el => {
+    const d = parseInt(el.dataset.day);
+    el.classList.toggle('selected', _formSelectedDays.includes(d));
+  });
+  renderScheduleTimeRows();
 }
 
-function deleteCourse(course) {
-  if (!course) return;
-  if (!confirm('确定要删除「' + course.name + '」吗？\n\n可以通过"恢复默认"找回。')) return;
+function renderScheduleTimeRows() {
+  const container = document.getElementById('fScheduleTimeRows');
+  const setAllBtn = document.getElementById('setAllSameBtn');
 
-  courses = courses.filter(function(c) { return c.id !== course.id; });
-  saveState();
-  document.getElementById('detailOverlay').style.display = 'none';
-  document.body.style.overflow = '';
-  currentDetailCourse = null;
-  window.currentDetailCourse = null;
-  refreshAll();
-  showToast('课程已删除');
+  if (_formSelectedDays.length === 0) {
+    container.innerHTML = '<div style="font-size:0.75rem;color:var(--text-secondary);padding:4px 0;">请选择上课日期</div>';
+    setAllBtn.style.display = 'none';
+    return;
+  }
+
+  setAllBtn.style.display = _formSelectedDays.length >= 2 ? 'inline-block' : 'none';
+
+  container.innerHTML = _formSelectedDays.map(day => {
+    const dt = _formDayTimes[day] || { startTime: '13:30', endTime: '16:30' };
+    // Ensure defaults are stored
+    if (!_formDayTimes[day]) _formDayTimes[day] = { ...dt };
+    return `
+      <div class="schedule-time-row">
+        <span class="day-label">${DAY_NAMES[day]}</span>
+        <select onchange="updateDayTime(${day},'startTime',this.value)" data-day="${day}" data-field="startTime">
+          ${SLOT_OPTIONS.map(t => `<option value="${t}" ${t === dt.startTime ? 'selected' : ''}>${t}</option>`).join('')}
+        </select>
+        <span style="color:var(--text-secondary);">至</span>
+        <select onchange="updateDayTime(${day},'endTime',this.value)" data-day="${day}" data-field="endTime">
+          ${SLOT_OPTIONS.map(t => `<option value="${t}" ${t === dt.endTime ? 'selected' : ''}>${t}</option>`).join('')}
+        </select>
+      </div>`;
+  }).join('');
 }
 
-// ==================== NAVIGATION ====================
-function switchPage(idx) {
-  currentPage = idx;
-  var pages = document.querySelectorAll('.page');
-  for (var i = 0; i < pages.length; i++) {
-    pages[i].classList.toggle('active', i === idx);
+function updateDayTime(day, field, value) {
+  if (!_formDayTimes[day]) {
+    _formDayTimes[day] = { startTime: '13:30', endTime: '16:30' };
   }
-  var tabs = document.querySelectorAll('.nav-tab');
-  for (var j = 0; j < tabs.length; j++) {
-    tabs[j].classList.toggle('active', j === idx);
-  }
-  if (idx === 1) renderTable();
-  if (idx === 2) renderStats();
+  _formDayTimes[day][field] = value;
 }
 
-// ==================== TOAST ====================
+function setAllSameTime() {
+  if (_formSelectedDays.length < 2) return;
+  const firstDay = _formSelectedDays[0];
+  const ref = _formDayTimes[firstDay] || { startTime: '13:30', endTime: '16:30' };
+  _formSelectedDays.forEach(day => {
+    _formDayTimes[day] = { ...ref };
+  });
+  renderScheduleTimeRows();
+  showToast('✅ 已同步所有日期时间');
+}
+
+function selectWeekType(val) {
+  _formWeekType = val;
+  document.getElementById('fWeekType').value = val;
+  document.querySelectorAll('#fWeekTypeSelector .week-type-opt').forEach(el => {
+    el.classList.toggle('selected', el.dataset.val === val);
+  });
+}
+
+function selectType(val) {
+  _formCourseType = val;
+  document.getElementById('fType').value = val;
+  document.querySelectorAll('#fTypeSelector .week-type-opt').forEach(el => {
+    el.classList.toggle('selected', el.dataset.val === val);
+  });
+}
+
+// ============================================================
+// Week Date Helpers
+// ============================================================
+function getWeekDates() {
+  const today = new Date();
+  const day = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+}
+
+// ============================================================
+// Zootopia Messages
+// ============================================================
+const ZOOTOPIA_MESSAGES = [
+  { emoji: '🦊', title: '厉害了我的宝！', msg: '—— 尼克·王尔德', char: 'Nick Wilde' },
+  { emoji: '🐰', title: '坚持就是胜利！', msg: '—— 朱迪·霍普斯', char: 'Judy Hopps' },
+  { emoji: '🦥', title: '慢...慢...来也很棒！', msg: '—— 闪电', char: 'Flash' },
+  { emoji: '🐘', title: '你天生就是明星！', msg: '—— 大象瑜伽老师', char: 'Nangi' },
+  { emoji: '🦊', title: '狡猾的小天才！', msg: '—— 尼克', char: 'Nick' },
+  { emoji: '🐰', title: '让世界变得更美好！', msg: '—— 朱迪', char: 'Judy' },
+  { emoji: '🦝', title: '大丰收啦！', msg: '—— 小盗', char: 'Duke' },
+  { emoji: '⭐', title: '你是最闪亮的星！', msg: '—— 夏奇羊', char: 'Gazelle' },
+];
+
+function getRandomMessage() {
+  return ZOOTOPIA_MESSAGES[Math.floor(Math.random() * ZOOTOPIA_MESSAGES.length)];
+}
+
+// ============================================================
+// Confetti
+// ============================================================
+function spawnConfetti() {
+  const container = document.getElementById('confettiContainer');
+  const colors = ['#FF8C00', '#4A90D9', '#52C41A', '#FFD700', '#FF4D4F', '#FF69B4', '#8B5CF6', '#00D2FF'];
+  const shapes = ['circle', 'square'];
+
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.top = -(Math.random() * 40) + 'px';
+    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.width = (8 + Math.random() * 12) + 'px';
+    piece.style.height = (8 + Math.random() * 12) + 'px';
+    piece.style.borderRadius = shapes[Math.floor(Math.random() * 2)] === 'circle' ? '50%' : '3px';
+    piece.style.animationDuration = (1.5 + Math.random() * 2.5) + 's';
+    piece.style.animationDelay = Math.random() * 0.5 + 's';
+    container.appendChild(piece);
+
+    setTimeout(() => piece.remove(), 3500);
+  }
+}
+
+// ============================================================
+// Celebration
+// ============================================================
+function showCelebration(courseName, points) {
+  const msg = getRandomMessage();
+  const overlay = document.getElementById('celebrationOverlay');
+  document.getElementById('celebEmoji').textContent = msg.emoji;
+  document.getElementById('celebTitle').textContent = msg.title;
+  document.getElementById('celebMsg').textContent = msg.msg;
+  document.getElementById('celebPoints').textContent = '+' + points + ' 分';
+
+  const streak = calculateStreak();
+  const bonusMsg = [];
+  if (streak === 3) bonusMsg.push('🔥 连续3天打卡 +5 额外积分！');
+  if (streak === 7) bonusMsg.push('🌟 连续7天打卡 +20 额外积分！');
+  document.getElementById('celebBonus').textContent = bonusMsg.join(' · ');
+
+  overlay.style.display = 'flex';
+  spawnConfetti();
+}
+
+function closeCelebration() {
+  document.getElementById('celebrationOverlay').style.display = 'none';
+  renderChildMode();
+}
+
+// ============================================================
+// Toast
+// ============================================================
 function showToast(msg) {
-  var container = document.getElementById('toastContainer');
-  var toast = document.createElement('div');
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
   toast.className = 'toast';
   toast.textContent = msg;
-  container.appendChild(toast);
-  setTimeout(function() { toast.remove(); }, 2000);
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
 }
 
-// ==================== UTILS ====================
-function escapeHtml(str) {
-  var div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
+// ============================================================
+// Mode Switching
+// ============================================================
+let currentMode = 'child';
 
-function generateId() {
-  return 'c' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-}
+function switchMode(mode) {
+  if (mode === 'parent' && currentMode !== 'parent') {
+    document.getElementById('passwordModal').style.display = 'flex';
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordError').textContent = '';
+    document.getElementById('passwordInput').focus();
+    window._pendingModeSwitch = 'parent';
+    return;
+  }
 
-function addNewCourse() {
-  var newCourse = {
-    id: generateId(),
-    name: '新课程',
-    teacher: '教师',
-    location: '待定',
-    day: todayDayIndex() >= 0 ? todayDayIndex() : 0,
-    startSlot: 1,
-    endSlot: 1,
-    weekType: 'all',
-  };
-  courses.push(newCourse);
-  saveState();
-  refreshAll();
-  openEdit(newCourse);
-  showToast('已添加新课程，请编辑详情');
-}
+  currentMode = mode;
+  document.getElementById('sectionChild').classList.toggle('active', mode === 'child');
+  document.getElementById('sectionParent').classList.toggle('active', mode === 'parent');
+  document.getElementById('btnChildMode').classList.toggle('active', mode === 'child');
+  document.getElementById('btnParentMode').classList.toggle('active', mode === 'parent');
 
-function resetData() {
-  if (confirm('确定要恢复为默认课程表吗？\n\n所有自定义修改将丢失。')) {
-    courses = JSON.parse(JSON.stringify(DEFAULT_COURSES));
-    userWeekOverride = null;
-    saveState();
-    refreshAll();
-    showToast('已恢复默认课程表');
+  if (mode === 'child') {
+    renderChildMode();
+  } else {
+    renderParentMode();
   }
 }
 
-// ==================== INIT ====================
-function init() {
-  loadState();
-  currentWeek = getAcademicWeek();
-  currentWeekParity = getEffectiveWeekParity();
-  renderWeekBadge();
-  renderHeader();
-  renderNextBar();
-  renderToday();
+function verifyPassword() {
+  const input = document.getElementById('passwordInput').value;
+  if (input === appData.settings.password) {
+    document.getElementById('passwordModal').style.display = 'none';
+    document.getElementById('passwordError').textContent = '';
+    currentMode = 'parent';
+    document.getElementById('sectionChild').classList.remove('active');
+    document.getElementById('sectionParent').classList.add('active');
+    document.getElementById('btnChildMode').classList.remove('active');
+    document.getElementById('btnParentMode').classList.add('active');
+    renderParentMode();
+  } else {
+    document.getElementById('passwordError').textContent = '❌ 密码错误，请重试';
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordInput').focus();
+  }
+}
+
+function closePasswordModal() {
+  document.getElementById('passwordModal').style.display = 'none';
+  window._pendingModeSwitch = null;
+}
+
+function changePassword() {
+  const newPw = document.getElementById('newPassword').value.trim();
+  if (!newPw) { showToast('请输入新密码'); return; }
+  appData.settings.password = newPw;
+  saveData(appData);
+  document.getElementById('newPassword').value = '';
+  showToast('✅ 密码已更新');
+}
+
+function clearAllData() {
+  if (confirm('确定要清除所有数据并恢复默认吗？此操作不可恢复！')) {
+    if (confirm('再次确认：所有打卡记录和自定义课程都将丢失！')) {
+      appData = {
+        courses: migrateToGroups(migrateSchedules(JSON.parse(JSON.stringify(DEFAULT_COURSES)))),
+        checkins: [],
+        settings: { password: appData.settings.password || '123456' },
+        pointsShop: { settlements: [] }
+      };
+      saveData(appData);
+      showToast('✅ 数据已重置');
+      renderParentMode();
+    }
+  }
+}
+
+// ============================================================
+// CHILD MODE RENDERING
+// ============================================================
+function renderChildMode() {
+  if (currentMode !== 'child') return;
+
+  const now = new Date();
+  const todayDay = getTodayDay();
+  const todayStr = getTodayStr();
+
+  document.getElementById('todayDate').textContent =
+    `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+  document.getElementById('todayDayName').textContent = DAY_NAMES[todayDay];
+
+  const streak = calculateStreak();
+  const totalPoints = getTotalPoints() + getStreakBonusTotal();
+  document.getElementById('streakBadge').textContent = streak > 0 ? `🔥 ${streak}天` : '🔥 0天';
+  document.getElementById('totalPoints').textContent = totalPoints;
+  document.getElementById('streakDays').textContent = streak;
+
+  // Render child mode points shop card
+  renderChildShopCard();
+  setupChildShopClick();
+
+  const todayCourses = getTodayCourses();
+  document.getElementById('courseCount').textContent = todayCourses.length + '项';
+
+  const todayCoursesEl = document.getElementById('todayCourses');
+  if (todayCourses.length === 0) {
+    todayCoursesEl.innerHTML = `
+      <div class="empty-state">
+        <span class="emoji">🎉</span>
+        <span class="text">今天没有课程安排~<br>好好休息吧！</span>
+      </div>`;
+  } else {
+    todayCoursesEl.innerHTML = todayCourses.map(c => {
+      const checked = isCheckedIn(c.id, todayStr);
+      const bgClass = c.type === 'fixed' ? 'bg-orange' : 'bg-blue';
+      const cardClass = checked ? 'checked-in' : '';
+      let btnClass, btnText, btnDisabled;
+      if (checked) {
+        btnClass = 'done';
+        btnText = '✅ 已打卡';
+        btnDisabled = true;
+      } else {
+        btnClass = 'ready';
+        btnText = '📌 打卡 +' + c.points;
+        btnDisabled = false;
+      }
+      const weekBadge = (c.weekType && c.weekType !== 'every')
+        ? `<span class="badge badge-purple" style="font-size:0.65rem;padding:2px 6px;">${c.weekType==='odd'?'单周':'双周'}</span>` : '';
+      return `
+        <div class="course-card ${cardClass}">
+          <div class="course-emoji ${bgClass}">${c.emoji}</div>
+          <div class="course-info">
+            <div class="course-name">${c.name} ${weekBadge}</div>
+            <div class="course-meta">
+              <span>🕐 ${c.startTime}-${c.endTime}</span>
+              ${c.location ? `<span>📍 ${c.location}</span>` : ''}
+            </div>
+            <div class="course-points">⭐ +${c.points} 积分</div>
+          </div>
+          <button class="checkin-btn ${btnClass}"
+            ${btnDisabled ? 'disabled' : ''}
+            onclick="doCheckIn('${c.id}')">${btnText}</button>
+        </div>`;
+    }).join('');
+  }
+
+  renderWeekView();
+}
+
+function doCheckIn(courseId) {
+  const course = appData.courses.find(c => c.id === courseId);
+  if (!course) return;
+
+  if (!checkIn(courseId)) {
+    showToast('今天已经打过卡啦~');
+    return;
+  }
+
+  showCelebration(course.name, course.points);
+}
+
+function renderWeekView() {
+  const weekDates = getWeekDates();
+  const todayStr = getTodayStr();
+  const todayDay = getTodayDay();
+
+  const weekGrid = document.getElementById('weekGrid');
+  weekGrid.innerHTML = weekDates.map((d, i) => {
+    const dayOfWeek = d.getDay();
+    const dateStr = getDateStr(d);
+    const courses = getCoursesForDay(dayOfWeek);
+    const isToday = dateStr === todayStr;
+    const hasCourses = courses.length > 0;
+
+    const checkedCount = courses.filter(c => isCheckedIn(c.id, dateStr)).length;
+    const allChecked = hasCourses && checkedCount === courses.length;
+
+    return `
+      <div class="week-day ${isToday ? 'today' : ''} ${hasCourses ? 'has-courses' : ''}"
+           style="${allChecked ? 'background:#f0fff0;' : ''}"
+           onclick="showDayDetail(${dayOfWeek}, '${dateStr}')">
+        <div class="dow">${DAY_NAMES_SHORT[dayOfWeek]}</div>
+        <div class="date-num">${d.getDate()}</div>
+        ${hasCourses ? `
+          <div class="course-dots">
+            ${courses.slice(0, 3).map(c =>
+              `<span class="dot ${c.type === 'fixed' ? 'dot-orange' : 'dot-blue'}"></span>`
+            ).join('')}
+            ${courses.length > 3 ? `<span style="font-size:0.6rem;">+${courses.length-3}</span>` : ''}
+          </div>
+        ` : ''}
+      </div>`;
+  }).join('');
+}
+
+function showDayDetail(dayOfWeek, dateStr) {
+  const courses = getCoursesForDay(dayOfWeek);
+  const el = document.getElementById('selectedDayCourses');
+  if (courses.length === 0) {
+    el.innerHTML = `<div class="empty-state"><span class="text">${DAY_NAMES[dayOfWeek]}没有课程</span></div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div style="font-weight:700;font-size:0.85rem;margin-bottom:8px;color:var(--blue);">
+      ${DAY_NAMES[dayOfWeek]} 课程详情
+    </div>
+    ${courses.map(c => {
+      const checked = isCheckedIn(c.id, dateStr);
+      return `
+        <div class="course-list-item" style="${checked ? 'background:#f0fff0;' : ''}">
+          <span class="item-emoji">${c.emoji}</span>
+          <div class="item-info">
+            <div class="item-name">${c.name} ${checked ? '✅' : ''}</div>
+            <div class="item-detail">${c.startTime}-${c.endTime} · +${c.points}分</div>
+          </div>
+        </div>`;
+    }).join('')}
+  `;
+}
+
+// ============================================================
+// PARENT MODE RENDERING
+// ============================================================
+function renderParentMode() {
+  if (currentMode !== 'parent') return;
+  renderCourseGroupList();
+  renderParentWeekView();
   renderStats();
-  switchPage(0);
+  renderPointsShop();
+}
 
-  // Refresh every 30s for time-sensitive display
-  refreshTimer = setInterval(function() {
-    renderHeader();
-    renderNextBar();
-    renderToday();
-    renderWeekBadge();
-  }, 30000);
+function parentTab(tab) {
+  document.getElementById('tabCourses').classList.toggle('active', tab === 'courses');
+  document.getElementById('tabSchedule').classList.toggle('active', tab === 'schedule');
+  document.getElementById('tabStats').classList.toggle('active', tab === 'stats');
+  document.getElementById('tabShop').classList.toggle('active', tab === 'shop');
+  document.getElementById('tabSettings').classList.toggle('active', tab === 'settings');
+  document.getElementById('panelCourses').style.display = tab === 'courses' ? 'block' : 'none';
+  document.getElementById('panelSchedule').style.display = tab === 'schedule' ? 'block' : 'none';
+  document.getElementById('panelStats').style.display = tab === 'stats' ? 'block' : 'none';
+  document.getElementById('panelShop').style.display = tab === 'shop' ? 'block' : 'none';
+  document.getElementById('panelSettings').style.display = tab === 'settings' ? 'block' : 'none';
 
-  // Keyboard shortcut
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeDetail();
-      closeEdit();
+  if (tab === 'stats') renderStats();
+  if (tab === 'shop') renderPointsShop();
+  if (tab === 'schedule') renderParentWeekView();
+}
+
+// ============================================================
+// Parent Week View
+// ============================================================
+function renderParentWeekView() {
+  const weekDates = getWeekDates();
+  const todayStr = getTodayStr();
+
+  document.getElementById('parentWeekLabel').textContent = '第' + getCurrentWeekLabel();
+
+  const weekGrid = document.getElementById('parentWeekGrid');
+  weekGrid.innerHTML = weekDates.map((d, i) => {
+    const dayOfWeek = d.getDay();
+    const dateStr = getDateStr(d);
+    const courses = getCoursesForDay(dayOfWeek);
+    const isToday = dateStr === todayStr;
+    const hasCourses = courses.length > 0;
+    const checkedCount = courses.filter(c => isCheckedIn(c.id, dateStr)).length;
+    const allChecked = hasCourses && checkedCount === courses.length;
+
+    return `
+      <div class="week-day ${isToday ? 'today' : ''} ${hasCourses ? 'has-courses' : ''}"
+           style="${allChecked ? 'background:#f0fff0;' : ''}"
+           onclick="showParentDayDetail(${dayOfWeek}, '${dateStr}')">
+        <div class="dow">${DAY_NAMES_SHORT[dayOfWeek]}</div>
+        <div class="date-num">${d.getDate()}</div>
+        ${hasCourses ? `
+          <div class="course-dots">
+            ${courses.slice(0, 3).map(c =>
+              `<span class="dot ${c.type === 'fixed' ? 'dot-orange' : 'dot-blue'}"></span>`
+            ).join('')}
+            ${courses.length > 3 ? `<span style="font-size:0.6rem;">+${courses.length-3}</span>` : ''}
+          </div>
+        ` : ''}
+      </div>`;
+  }).join('');
+}
+
+function showParentDayDetail(dayOfWeek, dateStr) {
+  const courses = getCoursesForDay(dayOfWeek);
+  const el = document.getElementById('parentDayDetail');
+  if (courses.length === 0) {
+    el.innerHTML = `<div class="empty-state"><span class="text">${DAY_NAMES[dayOfWeek]}没有课程</span></div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div style="font-weight:700;font-size:0.85rem;margin-bottom:8px;color:var(--blue);">
+      ${DAY_NAMES[dayOfWeek]} 课程详情 (${dateStr})
+    </div>
+    ${courses.map(c => {
+      const checked = isCheckedIn(c.id, dateStr);
+      return `
+        <div class="course-list-item" style="${checked ? 'background:#f0fff0;' : ''}">
+          <span class="item-emoji">${c.emoji}</span>
+          <div class="item-info">
+            <div class="item-name">${c.name} ${checked ? '✅' : '❌'}</div>
+            <div class="item-detail">${c.startTime}-${c.endTime} · +${c.points}分</div>
+          </div>
+        </div>`;
+    }).join('')}
+  `;
+}
+
+// ============================================================
+// Course Group Card List
+// ============================================================
+function renderCourseGroupList() {
+  const el = document.getElementById('courseGroupList');
+  const groups = getCourseGroups();
+
+  if (groups.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span class="emoji">📚</span><span class="text">还没有课程<br>点击下方按钮添加</span></div>';
+    return;
+  }
+
+  el.innerHTML = groups.map(g => {
+    const bgClass = g.type === 'fixed' ? 'bg-orange' : 'bg-blue';
+    const typeBadge = g.type === 'fixed'
+      ? '<span class="badge badge-orange">固定</span>'
+      : '<span class="badge badge-blue">灵活</span>';
+    const scheduleText = schedulesToSummary(g);
+    const weekTypeLabel = g.weekType === 'odd' ? '单周' : g.weekType === 'even' ? '双周' : '每周';
+    const weekTypeBadge = g.weekType !== 'every'
+      ? `<span class="badge badge-purple" style="font-size:0.7rem;">${weekTypeLabel}</span>` : '';
+
+    return `
+      <div class="course-group-card type-${g.type}" onclick="showCourseForm('${g.groupId}')">
+        <div class="cgc-header">
+          <div class="cgc-emoji ${bgClass}">${g.emoji}</div>
+          <div class="cgc-info">
+            <div class="cgc-name">
+              ${g.name}
+              ${typeBadge}
+              ${weekTypeBadge}
+            </div>
+            <div class="cgc-schedule">📅 ${scheduleText}</div>
+          </div>
+        </div>
+        <div class="cgc-meta">
+          ${g.teacher ? `<span>👩‍🏫 ${g.teacher}</span>` : ''}
+          ${g.location ? `<span>📍 ${g.location}</span>` : ''}
+          <span>⭐ +${g.points}分</span>
+          <span>📋 ${g.days.length}天/周</span>
+        </div>
+        <div class="cgc-actions" onclick="event.stopPropagation()">
+          <button class="cgc-btn-edit" onclick="showCourseForm('${g.groupId}')">✏️ 编辑</button>
+          <button class="cgc-btn-delete" onclick="deleteCourseGroup('${g.groupId}')">🗑️ 删除</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ============================================================
+// Course Form (Group-based with per-day schedules)
+// ============================================================
+function showCourseForm(groupId) {
+  const modal = document.getElementById('courseFormModal');
+  const isEdit = !!groupId;
+
+  document.getElementById('formTitle').textContent = isEdit ? '编辑课程' : '添加课程';
+  document.getElementById('editGroupId').value = groupId || '';
+  document.getElementById('deleteBtnWrap').style.display = isEdit ? 'block' : 'none';
+
+  document.getElementById('currentWeekNum').textContent = getCurrentWeekLabel();
+
+  if (isEdit) {
+    const groups = getCourseGroups();
+    const group = groups.find(g => g.groupId === groupId);
+    if (group) {
+      document.getElementById('fName').value = group.name;
+      document.getElementById('fEmoji').value = group.emoji;
+      selectType(group.type);
+      document.getElementById('fPoints').value = group.points;
+      document.getElementById('fTeacher').value = group.teacher || '';
+      document.getElementById('fLocation').value = group.location || '';
+      selectWeekType(group.weekType || 'every');
+
+      // Build _formDayTimes from group.schedules
+      _formDayTimes = {};
+      if (group.schedules && group.schedules.length > 0) {
+        group.schedules.forEach(s => {
+          _formDayTimes[s.day] = { startTime: s.startTime, endTime: s.endTime };
+        });
+      }
+      // Set days from schedules (may differ from group.days for backward compat)
+      const schedDays = Object.keys(_formDayTimes).map(Number);
+      setFormDays(schedDays.length > 0 ? schedDays : group.days);
+    }
+  } else {
+    document.getElementById('fName').value = '';
+    document.getElementById('fEmoji').value = '';
+    selectType('fixed');
+    _formDayTimes = { 1: { startTime: '13:30', endTime: '16:30' } };
+    setFormDays([1]);
+    selectWeekType('every');
+    document.getElementById('fPoints').value = '10';
+    document.getElementById('fTeacher').value = '';
+    document.getElementById('fLocation').value = '';
+  }
+
+  modal.style.display = 'flex';
+  setTimeout(() => document.getElementById('fName').focus(), 100);
+}
+
+function closeCourseForm(event) {
+  if (event && event.target !== document.getElementById('courseFormModal')) return;
+  document.getElementById('courseFormModal').style.display = 'none';
+}
+
+function saveCourseGroup() {
+  const groupId = document.getElementById('editGroupId').value;
+  const name = document.getElementById('fName').value.trim();
+  const emoji = document.getElementById('fEmoji').value.trim() || '📚';
+  const type = _formCourseType;
+  const weekType = _formWeekType;
+  const points = parseInt(document.getElementById('fPoints').value) || 0;
+  const teacher = document.getElementById('fTeacher').value.trim();
+  const location = document.getElementById('fLocation').value.trim();
+
+  if (!name) { showToast('请输入课程名称'); return; }
+  if (_formSelectedDays.length === 0) { showToast('请选择至少一个上课日期'); return; }
+
+  // Build schedules array from _formDayTimes
+  const schedules = _formSelectedDays.map(day => {
+    const dt = _formDayTimes[day] || { startTime: '13:30', endTime: '16:30' };
+    return { day, startTime: dt.startTime, endTime: dt.endTime };
+  });
+
+  if (groupId) {
+    // EDIT: remove all entries in this group, then recreate
+    appData.courses = appData.courses.filter(c => c.groupId !== groupId);
+    schedules.forEach(s => {
+      const daySched = schedules.find(sc => sc.day === s.day) || s;
+      appData.courses.push({
+        id: 'c_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 6),
+        groupId: groupId,
+        name, emoji, type, day: s.day,
+        startTime: s.startTime, endTime: s.endTime,
+        weekType, points, teacher, location,
+        schedules: JSON.parse(JSON.stringify(schedules))
+      });
+    });
+  } else {
+    // ADD: create new group
+    const newGroupId = 'g_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8);
+    schedules.forEach(s => {
+      appData.courses.push({
+        id: 'c_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 6),
+        groupId: newGroupId,
+        name, emoji, type, day: s.day,
+        startTime: s.startTime, endTime: s.endTime,
+        weekType, points, teacher, location,
+        schedules: JSON.parse(JSON.stringify(schedules))
+      });
+    });
+  }
+
+  saveData(appData);
+  document.getElementById('courseFormModal').style.display = 'none';
+  renderParentMode();
+  showToast('✅ 课程已保存');
+}
+
+function deleteCourseGroupFromForm() {
+  const groupId = document.getElementById('editGroupId').value;
+  if (groupId && confirm('确定要删除这个课程吗？')) {
+    appData.courses = appData.courses.filter(c => c.groupId !== groupId);
+    const remainingIds = new Set(appData.courses.map(c => c.id));
+    appData.checkins = appData.checkins.filter(c => remainingIds.has(c.courseId));
+    saveData(appData);
+    document.getElementById('courseFormModal').style.display = 'none';
+    renderParentMode();
+    showToast('🗑️ 课程已删除');
+  }
+}
+
+function deleteCourseGroup(groupId) {
+  if (confirm('确定要删除这个课程吗？相关的打卡记录也会被清理。')) {
+    appData.courses = appData.courses.filter(c => c.groupId !== groupId);
+    const remainingIds = new Set(appData.courses.map(c => c.id));
+    appData.checkins = appData.checkins.filter(c => remainingIds.has(c.courseId));
+    saveData(appData);
+    renderParentMode();
+    showToast('🗑️ 课程已删除');
+  }
+}
+
+function resetDefaults() {
+  if (confirm('确定要恢复默认课程数据吗？自定义课程将被替换。')) {
+    appData.courses = migrateToGroups(migrateSchedules(JSON.parse(JSON.stringify(DEFAULT_COURSES))));
+    saveData(appData);
+    renderParentMode();
+    showToast('✅ 已恢复默认课程');
+  }
+}
+
+// ============================================================
+// Statistics
+// ============================================================
+function renderStats() {
+  const el = document.getElementById('statDashboard');
+  const totalPoints = getTotalPoints() + getStreakBonusTotal();
+  const totalCheckins = appData.checkins.length;
+  const streak = calculateStreak();
+  const streakBonus = getStreakBonusTotal();
+
+  const todayStr = getTodayStr();
+  const todayCourses = getTodayCourses();
+  const todayChecked = todayCourses.filter(c => isCheckedIn(c.id, todayStr)).length;
+  const todayRate = todayCourses.length > 0 ? Math.round((todayChecked / todayCourses.length) * 100) : 0;
+
+  const weekDates = getWeekDates();
+  let weekTotalCourses = 0;
+  let weekCheckedCourses = 0;
+  weekDates.forEach(d => {
+    const day = d.getDay();
+    const courses = getCoursesForDay(day);
+    const dateStr = getDateStr(d);
+    weekTotalCourses += courses.length;
+    weekCheckedCourses += courses.filter(c => isCheckedIn(c.id, dateStr)).length;
+  });
+  const weekRate = weekTotalCourses > 0 ? Math.round((weekCheckedCourses / weekTotalCourses) * 100) : 0;
+
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  let monthTotal = 0;
+  let monthChecked = 0;
+  for (let d = new Date(monthStart); d <= now; d.setDate(d.getDate() + 1)) {
+    const day = d.getDay();
+    const dateStr = getDateStr(d);
+    const courses = getCoursesForDay(day);
+    monthTotal += courses.length;
+    monthChecked += courses.filter(c => isCheckedIn(c.id, dateStr)).length;
+  }
+  const monthRate = monthTotal > 0 ? Math.round((monthChecked / monthTotal) * 100) : 0;
+
+  const last30 = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const ds = getDateStr(d);
+    const day = d.getDay();
+    const courses = getCoursesForDay(day);
+    const checked = courses.filter(c => isCheckedIn(c.id, ds)).length;
+    last30.push({ date: ds, dayName: DAY_NAMES_SHORT[day], total: courses.length, checked });
+  }
+
+  const courseCheckinCounts = {};
+  appData.courses.forEach(c => { courseCheckinCounts[c.id] = { name: c.name, emoji: c.emoji, count: 0 }; });
+  appData.checkins.forEach(c => {
+    if (courseCheckinCounts[c.courseId]) {
+      courseCheckinCounts[c.courseId].count++;
     }
   });
+  const topCourses = Object.values(courseCheckinCounts)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  el.innerHTML = `
+    <div class="stats-row">
+      <div class="stat-card gold">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-value">${totalPoints}</div>
+        <div class="stat-label">总积分 (含奖励 +${streakBonus})</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-value">${totalCheckins}</div>
+        <div class="stat-label">总打卡次数</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card fire">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value">${streak}</div>
+        <div class="stat-label">当前连续天数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value">${todayRate}%</div>
+        <div class="stat-label">今日完成率</div>
+      </div>
+    </div>
+
+    <div class="stat-block">
+      <div class="stat-block-title">📊 本周完成率</div>
+      <div class="stat-big">${weekRate}%</div>
+      <div class="stat-sub">${weekCheckedCourses}/${weekTotalCourses} 项已完成</div>
+      <div class="stat-bar"><div class="stat-bar-fill blue" style="width:${weekRate}%"></div></div>
+    </div>
+
+    <div class="stat-block">
+      <div class="stat-block-title">📊 本月完成率</div>
+      <div class="stat-big">${monthRate}%</div>
+      <div class="stat-sub">${monthChecked}/${monthTotal} 项已完成</div>
+      <div class="stat-bar"><div class="stat-bar-fill green" style="width:${monthRate}%"></div></div>
+    </div>
+
+    <div class="stat-block">
+      <div class="stat-block-title">🏆 最常打卡课程</div>
+      ${topCourses.map((c, i) => `
+        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:0.85rem;">
+          <span>${['🥇','🥈','🥉','4️⃣','5️⃣'][i]}</span>
+          <span>${c.emoji}</span>
+          <span style="flex:1;">${c.name}</span>
+          <span style="font-weight:700;">${c.count}次</span>
+        </div>
+      `).join('')}
+      ${topCourses.length === 0 ? '<div style="font-size:0.8rem;color:var(--text-secondary);">还没有打卡记录</div>' : ''}
+    </div>
+
+    <div class="stat-block">
+      <div class="stat-block-title">📅 近30天打卡日历</div>
+      <div style="display:flex;flex-wrap:wrap;gap:3px;">
+        ${last30.map(d => {
+          let bgColor = '#eee';
+          if (d.total > 0 && d.checked === d.total) bgColor = '#52C41A';
+          else if (d.checked > 0) bgColor = '#FFB347';
+          else if (d.total > 0) bgColor = '#FFCDD2';
+          return `<span title="${d.date}: ${d.checked}/${d.total}"
+            style="width:16px;height:16px;border-radius:3px;background:${bgColor};display:inline-block;cursor:pointer;"
+            onclick="showToast('${d.date}: ${d.checked}/${d.total} 完成')"></span>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px;font-size:0.7rem;color:var(--text-secondary);">
+        <span>🟢 全部完成</span><span>🟠 部分完成</span><span>🔴 未完成</span><span>⬜ 无课程</span>
+      </div>
+    </div>
+  `;
 }
 
-// ==================== EXPORT TO GLOBAL ====================
-window.showDetail = showDetail;
-window.closeDetail = closeDetail;
-window.openEdit = openEdit;
-window.closeEdit = closeEdit;
-window.saveEdit = saveEdit;
-window.deleteCourse = deleteCourse;
-window.toggleWeek = toggleWeek;
-window.switchPage = switchPage;
-window.addNewCourse = addNewCourse;
-window.resetData = resetData;
-window.renderStats = renderStats;
-window.currentDetailCourse = null;
+// ============================================================
+// POINTS SHOP (积分商城)
+// ============================================================
 
-// Boot
-if (document.readyState !== 'loading') {
-  init();
-} else {
-  
+function getCurrentPeriod() {
+  const now = new Date();
+  const month = now.getMonth(); // 0-based
+  const year = now.getFullYear();
+
+  // Two-month periods: [0,1], [2,3], [4,5], [6,7], [8,9], [10,11]
+  const periodStartMonth = Math.floor(month / 2) * 2;
+  const periodEndMonth = periodStartMonth + 1;
+
+  const start = new Date(year, periodStartMonth, 1);
+  const end = new Date(year, periodEndMonth + 1, 0); // last day of end month
+  end.setHours(23, 59, 59, 999);
+
+  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const label = months[periodStartMonth] + '-' + months[periodEndMonth];
+
+  return { start, end, label, periodKey: `${year}-${periodStartMonth}` };
 }
 
+function getPeriodStats(periodStart, periodEnd) {
+  // Count total required courses and checked courses in the period
+  let totalRequired = 0;
+  let totalChecked = 0;
+  const dailyStatus = {}; // dateStr -> 'checked' | 'missed' | 'no_course'
 
-window.initCourse = init;
+  const d = new Date(periodStart);
+  const now = new Date();
+  const endDate = now < periodEnd ? now : periodEnd;
 
+  while (d <= endDate) {
+    const dateStr = getDateStr(d);
+    const day = d.getDay();
+    const courses = getCoursesForDayAll(day); // all courses regardless of weekType
+    const checked = courses.filter(c => isCheckedIn(c.id, dateStr)).length;
 
+    if (courses.length > 0) {
+      totalRequired += courses.length;
+      totalChecked += checked;
+      dailyStatus[dateStr] = (checked === courses.length) ? 'checked' : 'missed';
+    } else {
+      dailyStatus[dateStr] = 'no_course';
+    }
+    d.setDate(d.getDate() + 1);
+  }
+
+  const rate = totalRequired > 0 ? totalChecked / totalRequired : 0;
+  return { totalRequired, totalChecked, rate, dailyStatus };
+}
+
+function getCoursesForDayAll(day) {
+  // Get all courses for a day, ignoring weekType (for points shop counting)
+  return appData.courses.filter(c => c.day === day);
+}
+
+function getTier(rate) {
+  if (rate >= 1.0) return { tier: 'gold', emoji: '🥇', name: '全勤奖', reward: '¥200 礼物', condition: '连续两月全勤打卡' };
+  if (rate >= 0.8) return { tier: 'silver', emoji: '🥈', name: '优秀奖', reward: '¥100 礼物', condition: '打卡率 ≥ 80%' };
+  if (rate >= 0.5) return { tier: 'bronze', emoji: '🥉', name: '一般奖', reward: '¥50 礼物', condition: '打卡率 ≥ 50%' };
+  return { tier: 'none', emoji: '📋', name: '未达标', reward: '无奖励', condition: '打卡率 < 50%' };
+}
+
+function getTierBarClass(tier) {
+  if (tier === 'gold') return 'gold';
+  if (tier === 'silver') return 'silver';
+  if (tier === 'bronze') return 'bronze';
+  return 'low';
+}
+
+function isPeriodSettled(periodKey) {
+  return appData.pointsShop.settlements.some(s => s.periodKey === periodKey);
+}
+
+function settleCurrentPeriod() {
+  const period = getCurrentPeriod();
+
+  if (isPeriodSettled(period.periodKey)) {
+    showToast('⚠️ 当前周期已结算');
+    return;
+  }
+
+  // Check if period is over
+  const now = new Date();
+  if (now < period.end) {
+    const daysLeft = Math.ceil((period.end - now) / (1000 * 60 * 60 * 24));
+    if (!confirm(`当前周期尚未结束（还剩 ${daysLeft} 天），确定要提前结算吗？`)) return;
+  }
+
+  const stats = getPeriodStats(period.start, period.end);
+  const tierInfo = getTier(stats.rate);
+
+  const settlement = {
+    periodKey: period.periodKey,
+    periodLabel: period.label,
+    periodStart: getDateStr(period.start),
+    periodEnd: getDateStr(period.end),
+    tier: tierInfo.tier,
+    emoji: tierInfo.emoji,
+    name: tierInfo.name,
+    reward: tierInfo.reward,
+    rate: Math.round(stats.rate * 10000) / 100,
+    totalRequired: stats.totalRequired,
+    totalChecked: stats.totalChecked,
+    settledAt: new Date().toISOString()
+  };
+
+  appData.pointsShop.settlements.push(settlement);
+  saveData(appData);
+
+  const tierNames = { gold: '🥇 全勤奖', silver: '🥈 优秀奖', bronze: '🥉 一般奖', none: '📋 未达标' };
+  showToast(`✅ ${period.label} 已结算: ${tierNames[tierInfo.tier]} ${tierInfo.reward}`);
+  renderPointsShop();
+}
+
+function renderPointsShop() {
+  const el = document.getElementById('pointsShopContent');
+  const period = getCurrentPeriod();
+  const now = new Date();
+
+  // Calculate days left
+  const daysLeft = now < period.end ? Math.ceil((period.end - now) / (1000 * 60 * 60 * 24)) : 0;
+  const daysTotal = Math.ceil((period.end - period.start) / (1000 * 60 * 60 * 24)) + 1;
+  const daysPassed = daysTotal - daysLeft;
+
+  const stats = getPeriodStats(period.start, period.end);
+  const tierInfo = getTier(stats.rate);
+  const ratePercent = Math.round(stats.rate * 10000) / 100;
+  const isSettled = isPeriodSettled(period.periodKey);
+  const canSettle = now >= period.end || daysLeft <= 0;
+
+  // Find current settlement if exists
+  const currentSettlement = appData.pointsShop.settlements.find(s => s.periodKey === period.periodKey);
+
+  // Build calendar
+  const calHtml = buildPeriodCalendar(period.start, period.end, stats.dailyStatus);
+
+  // Build settlement history
+  const historyHtml = buildSettlementHistory();
+
+  let tierDisplay;
+  if (currentSettlement) {
+    tierDisplay = `
+      <div class="shop-tier-display">
+        <div class="tier-emoji">${currentSettlement.emoji}</div>
+        <div class="tier-name">${currentSettlement.name}</div>
+        <div class="tier-reward">🎁 ${currentSettlement.reward}</div>
+        <div class="tier-condition">打卡率 ${currentSettlement.rate}% · ${currentSettlement.totalChecked}/${currentSettlement.totalRequired}</div>
+      </div>`;
+  } else {
+    tierDisplay = `
+      <div class="shop-tier-display">
+        <div class="tier-emoji">${tierInfo.emoji}</div>
+        <div class="tier-name">预估: ${tierInfo.name}</div>
+        <div class="tier-reward">🎁 ${tierInfo.reward}</div>
+        <div class="tier-condition">${tierInfo.condition}</div>
+      </div>`;
+  }
+
+  el.innerHTML = `
+    <!-- Period Header -->
+    <div class="shop-period-header">
+      <div class="period-label">📅 当前结算周期</div>
+      <div class="period-title">${period.label}</div>
+      <div class="period-days-left">
+        ${isSettled ? '✅ 已结算' : (daysLeft > 0 ? `⏳ 还剩 ${daysLeft} 天` : '🔔 可以结算了！')}
+      </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="shop-progress-section">
+      ${tierDisplay}
+
+      <div class="shop-progress-bar">
+        <div class="shop-progress-bar-fill ${getTierBarClass(currentSettlement ? currentSettlement.tier : tierInfo.tier)}"
+             style="width:${Math.min(ratePercent, 100)}%"></div>
+      </div>
+
+      <div class="shop-stats-row">
+        <div class="shop-stat">
+          <div class="shop-stat-val" style="color:var(--blue);">${ratePercent}%</div>
+          <div class="shop-stat-lbl">当前打卡率</div>
+        </div>
+        <div class="shop-stat">
+          <div class="shop-stat-val">${stats.totalChecked}</div>
+          <div class="shop-stat-lbl">已打卡</div>
+        </div>
+        <div class="shop-stat">
+          <div class="shop-stat-val">${stats.totalRequired}</div>
+          <div class="shop-stat-lbl">应打卡</div>
+        </div>
+      </div>
+
+      <!-- Tier thresholds -->
+      <div style="margin-top:10px;font-size:0.7rem;color:var(--text-secondary);text-align:center;">
+        🥇 全勤 100% &nbsp;|&nbsp; 🥈 优秀 80% &nbsp;|&nbsp; 🥉 一般 50%
+      </div>
+
+      ${!isSettled ? `
+        <button class="settle-btn" ${!canSettle ? 'disabled' : ''}
+          onclick="settleCurrentPeriod()">
+          ${canSettle ? '💰 结算本期奖励' : '⏳ 周期未结束，无法结算'}
+        </button>
+      ` : ''}
+    </div>
+
+    <!-- Daily Calendar -->
+    <div class="card">
+      <div class="card-header">
+        <div class="icon green">📅</div>
+        <div class="title">每日打卡日历</div>
+      </div>
+      ${calHtml}
+    </div>
+
+    <!-- Settlement History -->
+    <div class="card" style="margin-top:14px;">
+      <div class="card-header">
+        <div class="icon orange">📋</div>
+        <div class="title">结算历史</div>
+      </div>
+      ${historyHtml}
+    </div>
+
+    <!-- Tier Rules -->
+    <div class="card" style="margin-top:14px;">
+      <div class="card-header">
+        <div class="icon gold">🏆</div>
+        <div class="title">奖励规则（两月结算）</div>
+      </div>
+      <div style="font-size:0.82rem;line-height:1.8;">
+        <div>🥇 <b>全勤奖</b> — 连续两月100%打卡 → 🎁 ¥200 礼物</div>
+        <div>🥈 <b>优秀奖</b> — 打卡率 ≥ 80% → 🎁 ¥100 礼物</div>
+        <div>🥉 <b>一般奖</b> — 打卡率 ≥ 50% → 🎁 ¥50 礼物</div>
+        <div style="margin-top:4px;color:var(--text-secondary);font-size:0.75rem;">
+          📌 仅统计有课程安排的日期，无课程日不计入
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function buildPeriodCalendar(start, end, dailyStatus) {
+  // Build a calendar grid showing all days in the period
+  const DAY_HEADERS = ['日', '一', '二', '三', '四', '五', '六'];
+
+  let html = '<div class="shop-calendar">';
+
+  // Day headers
+  DAY_HEADERS.forEach(h => {
+    html += `<div class="cal-day-header">${h}</div>`;
+  });
+
+  // Find the first day of the first week
+  const firstDay = new Date(start);
+  const startDow = firstDay.getDay();
+
+  // Add empty cells for days before period start
+  for (let i = 0; i < startDow; i++) {
+    html += '<div class="cal-day"></div>';
+  }
+
+  // Add each day in the period
+  const d = new Date(start);
+  const now = new Date();
+  const todayStr = getDateStr(now);
+
+  while (d <= end) {
+    const dateStr = getDateStr(d);
+    const status = dailyStatus[dateStr] || 'future';
+    const isToday = dateStr === todayStr;
+    const dayNum = d.getDate();
+
+    let cls = 'cal-day ';
+    let title = dateStr;
+    if (status === 'checked') { cls += 'checked'; title += ' ✅ 已完成'; }
+    else if (status === 'missed') { cls += 'missed'; title += ' ❌ 未完成'; }
+    else if (status === 'no_course') { cls += 'no-course'; title += ' 无课程'; }
+    else { cls += 'future'; title += ' 未到来'; }
+
+    if (isToday) {
+      html += `<div class="${cls}" title="${title}" style="border:2px solid var(--orange);font-weight:800;">${dayNum}</div>`;
+    } else {
+      html += `<div class="${cls}" title="${title}">${dayNum}</div>`;
+    }
+
+    d.setDate(d.getDate() + 1);
+  }
+
+  html += '</div>';
+
+  // Legend
+  html += `
+    <div class="shop-legend">
+      <span>🟢 已完成</span>
+      <span>🔴 未完成</span>
+      <span>⬜ 无课程</span>
+      <span>⬜ 未到来</span>
+    </div>`;
+
+  return html;
+}
+
+function buildSettlementHistory() {
+  const settlements = [...appData.pointsShop.settlements].reverse();
+
+  if (settlements.length === 0) {
+    return '<div class="empty-state"><span class="emoji">📋</span><span class="text">还没有结算记录</span></div>';
+  }
+
+  return settlements.map(s => `
+    <div class="settlement-history-item">
+      <div class="settle-tier">${s.emoji}</div>
+      <div class="settle-info">
+        <div class="settle-period">${s.periodLabel} · ${s.name}</div>
+        <div class="settle-detail">
+          打卡率 ${s.rate}% · ${s.totalChecked}/${s.totalRequired}
+          · ${new Date(s.settledAt).toLocaleDateString('zh-CN')}
+        </div>
+      </div>
+      <div class="settle-reward">${s.reward}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// Child Mode: Simplified Points Shop Card
+// ============================================================
+function renderChildShopCard() {
+  const period = getCurrentPeriod();
+  const stats = getPeriodStats(period.start, period.end);
+  const tierInfo = getTier(stats.rate);
+  const ratePercent = Math.round(stats.rate * 10000) / 100;
+  const isSettled = isPeriodSettled(period.periodKey);
+
+  // Find settlement if exists
+  const settlement = appData.pointsShop.settlements.find(s => s.periodKey === period.periodKey);
+
+  let emoji, status, hint;
+  const shortStatus = ratePercent + '%';
+
+  if (settlement) {
+    emoji = settlement.emoji;
+    status = settlement.name;
+    hint = '积分商城';
+  } else {
+    emoji = tierInfo.emoji;
+    status = ratePercent + '%';
+    hint = '积分商城';
+  }
+
+  document.getElementById('childShopEmoji').textContent = emoji;
+  document.getElementById('childShopStatus').textContent = status;
+  document.getElementById('childShopHint').textContent = hint;
+}
+
+// Child mode shop detail overlay
+function showChildShopDetail() {
+  const period = getCurrentPeriod();
+  const stats = getPeriodStats(period.start, period.end);
+  const tierInfo = getTier(stats.rate);
+  const ratePercent = Math.round(stats.rate * 10000) / 100;
+  const isSettled = isPeriodSettled(period.periodKey);
+  const settlement = appData.pointsShop.settlements.find(s => s.periodKey === period.periodKey);
+
+  const overlay = document.createElement('div');
+  overlay.id = 'childShopOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:flex-end;justify-content:center;';
+
+  const sheet = document.createElement('div');
+  sheet.style.cssText = 'background:#fff;width:100%;max-width:500px;border-radius:20px 20px 0 0;max-height:90vh;overflow-y:auto;padding:8px 0 30px;box-shadow:0 -4px 20px rgba(0,0,0,0.15);';
+
+  let html = '<div class="modal-handle"></div>';
+  html += '<div style="text-align:center;padding:10px 20px 20px;">';
+  html += '<div style="font-size:48px;margin-bottom:8px;">🎁</div>';
+  html += '<h2 style="margin:0 0 4px;font-size:22px;font-weight:700;">积分商城</h2>';
+  html += '<div style="font-size:13px;color:#999;">' + period.label + '</div>';
+  html += '</div>';
+
+  // Points + streak inline
+  html += '<div style="display:flex;gap:12px;padding:0 20px 16px;">';
+  html += '<div style="flex:1;background:#FFF3E0;border-radius:12px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);">';
+  html += '<div style="font-size:32px;font-weight:700;color:#FF8C00;">' + (appData.totalPoints || 0) + '</div>';
+  html += '<div style="font-size:12px;color:#888;margin-top:2px;">总积分 ⭐</div></div>';
+  html += '<div style="flex:1;background:#FFF0F0;border-radius:12px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);">';
+  html += '<div style="font-size:32px;font-weight:700;color:#FF6B6B;">' + (appData.streak || 0) + '</div>';
+  html += '<div style="font-size:12px;color:#888;margin-top:2px;">连续打卡 🔥</div></div>';
+  html += '</div>';
+
+  // Progress bar
+  html += '<div style="padding:0 20px 16px;">';
+  html += '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;color:#555;">';
+  html += '<span>📊 打卡进度</span><span>' + (stats.checked || 0) + '/' + (stats.total || 0) + '天 (' + ratePercent + '%)</span></div>';
+  html += '<div style="height:14px;background:#eee;border-radius:7px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,0.08);">';
+  html += '<div style="height:100%;width:' + Math.min(ratePercent, 100) + '%;background:linear-gradient(90deg,#FF8C00,#4A90D9);border-radius:7px;transition:width 0.5s;"></div></div>';
+  html += '</div>';
+
+  // Tier cards
+  const tiers = [
+    { emoji: '🥇', name: '全勤奖', reward: '¥200 礼品', need: '100%', rate: 100, color: '#FF8C00' },
+    { emoji: '🥈', name: '优秀奖', reward: '¥100 礼品', need: '≥80%', rate: 80, color: '#888' },
+    { emoji: '🥉', name: '鼓励奖', reward: '¥50 礼品', need: '≥50%', rate: 50, color: '#B8860B' }
+  ];
+
+  html += '<div style="padding:0 20px 16px;">';
+  html += '<div style="font-size:14px;font-weight:600;margin-bottom:8px;color:#333;">🏆 奖励档位</div>';
+  for (const t of tiers) {
+    const achieved = ratePercent >= t.rate;
+    const isCurrent = tierInfo.tier === ['gold','silver','bronze'][tiers.indexOf(t)];
+    const bg = achieved ? '#F0FFF0' : '#f8f8f8';
+    const border = isCurrent ? '2px solid ' + t.color : '2px solid transparent';
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:6px;border-radius:10px;background:' + bg + ';border:' + border + ';">';
+    html += '<span style="font-size:24px;">' + t.emoji + '</span>';
+    html += '<div style="flex:1;"><div style="font-weight:600;font-size:14px;color:#333;">' + t.name + '</div><div style="font-size:12px;color:#888;">' + t.reward + ' · 需' + t.need + '打卡率</div></div>';
+    html += '<span style="font-size:18px;">' + (achieved ? '✅' : (isCurrent ? '⭐' : '')) + '</span></div>';
+  }
+  html += '</div>';
+
+  if (settlement) {
+    html += '<div style="padding:0 20px 16px;text-align:center;font-size:16px;color:#333;">';
+    html += '🎉 ' + settlement.name + '！获得 ' + settlement.reward + '</div>';
+  }
+
+  html += '<div style="padding:0 20px 0;">';
+  html += '<button class="btn btn-primary" onclick="closeChildShop()" style="width:100%;padding:14px;font-size:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#FF8C00,#4A90D9);color:#fff;font-weight:600;cursor:pointer;">知道了 👍</button>';
+  html += '</div>';
+
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) closeChildShop();
+  });
+
+  document.body.appendChild(overlay);
+}
+
+// Expose to global scope for onclick
+window.showChildShopDetail = showChildShopDetail;
+window.closeChildShop = closeChildShop;
+
+// Also attach click handler after render
+function setupChildShopClick() {
+  const el = document.getElementById('childShopCard');
+  if (el) {
+    el.onclick = function() { showChildShopDetail(); };
+  }
+}
+
+function closeChildShop() {
+  const el = document.getElementById('childShopOverlay');
+  if (el) el.remove();
+}
+
+// Override Escape to also close child shop
+const origKeydown = document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeChildShop();
+  }
+}, { once: true });
+
+// ============================================================
+// Init
+// ============================================================
+function init() {
+  renderChildMode();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+setInterval(() => {
+  if (currentMode === 'child') renderChildMode();
+}, 60000);
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.getElementById('passwordModal').style.display = 'none';
+    document.getElementById('courseFormModal').style.display = 'none';
+    document.getElementById('celebrationOverlay').style.display = 'none';
+  }
+});
+
+console.log('🦊🐰 疯狂课程表 · Zootopia Scheduler 已就绪！');
+console.log('默认家长密码: 123456');
+console.log('✨ 已升级：支持每日不同时间段编辑');
+console.log('🎁 新增：积分商城（两月结算奖励）');
+console.log('📋 课程管理：卡片式编辑，每个日期独立设置时间');
 </script>
+
 </body>
 </html>
