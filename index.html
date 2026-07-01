@@ -1455,7 +1455,10 @@ const DAY_NAMES_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
 // ============================================================
 const SUPABASE_URL = 'https://lbzjuxhllrrcmenfrogr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxiemp1eGhsbHJyY21lbmZyb2dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MTQ4NzMsImV4cCI6MjA5ODQ5MDg3M30.a-v15kYhNTQuRzlnOTqvO2_T7W4uJSJY47CsFpAIklk';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = (window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+if (!supabase) console.warn('Supabase SDK 未加载，云同步功能不可用');
 
 // 设备ID：每个浏览器/设备自动生成一个唯一ID，存在localStorage里
 function getDeviceId() {
@@ -1470,6 +1473,7 @@ const DEVICE_ID = getDeviceId();
 
 // 从Supabase拉取云端打卡记录（返回数组，网络失败时返回null）
 async function fetchCloudCheckins() {
+  if (!supabase) return null;
   try {
     const { data, error } = await supabase
       .from('checkins')
@@ -1484,6 +1488,7 @@ async function fetchCloudCheckins() {
 
 // 上传打卡记录到Supabase（异步，不阻塞UI）
 async function uploadCheckin(courseId, dateStr) {
+  if (!supabase) return;
   try {
     const { error } = await supabase
       .from('checkins')
@@ -1501,6 +1506,7 @@ async function uploadCheckin(courseId, dateStr) {
 
 // 从Supabase删除打卡记录（取消打卡时）
 async function removeCloudCheckin(courseId, dateStr) {
+  if (!supabase) return;
   try {
     const { error } = await supabase
       .from('checkins')
