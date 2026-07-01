@@ -272,8 +272,9 @@ body::after {
 .checkin-btn.done {
   background: var(--green-bg);
   color: var(--green);
-  cursor: default;
+  cursor: pointer;
 }
+.checkin-btn.done:active { transform: scale(0.95); }
 .checkin-btn.locked {
   background: #f0f0f0;
   color: #bbb;
@@ -2108,7 +2109,7 @@ function renderChildMode() {
       if (checked) {
         btnClass = 'done';
         btnText = '✅ 已打卡';
-        btnDisabled = true;
+        btnDisabled = false;  // false = 可再次点击取消打卡
       } else {
         btnClass = 'ready';
         btnText = '📌 打卡 +' + c.points;
@@ -2141,11 +2142,16 @@ function doCheckIn(courseId) {
   const course = appData.courses.find(c => c.id === courseId);
   if (!course) return;
 
-  if (!checkIn(courseId)) {
-    showToast('今天已经打过卡啦~');
+  const todayStr = getTodayStr();
+  if (isCheckedIn(courseId, todayStr)) {
+    // 已打卡 → 取消打卡
+    undoCheckIn(courseId);
+    renderChildMode();
+    showToast(`已取消「${course.name}」的打卡`);
     return;
   }
 
+  checkIn(courseId);
   showCelebration(course.name, course.points);
 }
 
