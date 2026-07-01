@@ -1450,18 +1450,70 @@ const DAY_NAMES = ['周日', '周一', '周二', '周三', '周四', '周五', '
 const DAY_NAMES_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
 
 // ============================================================
-// Supabase Cloud Sync (disabled — needs valid anon key)
+// Supabase Cloud Sync
 // ============================================================
-const DEVICE_ID = 'local_' + (localStorage.getItem('zootopia_device_id') || (() => {
-  const id = Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8);
-  localStorage.setItem('zootopia_device_id', id);
-  return id;
-})());
+const SUPABASE_URL = 'https://lbzjuxhllrrcmenfrogr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxiemp1eGhsbHJyY21lbmZyb2dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MTQ4NzMsImV4cCI6MjA5ODQ5MDg3M30.a-v15kYhNTQuRzlnOTqvO2_T7W4uJSJY47CsFpAIklk';
 
-// 以下为占位函数 — 激活云同步时需要替换
-async function fetchCloudCheckins() { return null; }
-async function uploadCheckin(courseId, dateStr) {}
-async function removeCloudCheckin(courseId, dateStr) {}
+// 设备ID：每个浏览器/设备自动生成一个唯一ID
+function getDeviceId() {
+  let did = localStorage.getItem('zootopia_device_id');
+  if (!did) {
+    did = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 8);
+    localStorage.setItem('zootopia_device_id', did);
+  }
+  return did;
+}
+const DEVICE_ID = getDeviceId();
+
+// Supabase REST 请求头
+function sbHeaders() {
+  return {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+}
+
+// 从云端拉取打卡记录
+async function fetchCloudCheckins() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/checkins?select=course_id,date,device_id,timestamp', {
+      headers: sbHeaders()
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json() || [];
+  } catch (e) {
+    console.warn('☁️ 云端同步失败:', e.message);
+    return null;
+  }
+}
+
+// 上传打卡到云端
+async function uploadCheckin(courseId, dateStr) {
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/checkins', {
+      method: 'POST',
+      headers: sbHeaders(),
+      body: JSON.stringify({ course_id: courseId, date: dateStr, device_id: DEVICE_ID, timestamp: Date.now() })
+    });
+  } catch (e) {
+    console.warn('☁️ 上传打卡失败:', e.message);
+  }
+}
+
+// 从云端删除打卡
+async function removeCloudCheckin(courseId, dateStr) {
+  try {
+    const q = new URLSearchParams({ 'course_id': 'eq.' + courseId, 'date': 'eq.' + dateStr, 'device_id': 'eq.' + DEVICE_ID });
+    await fetch(SUPABASE_URL + '/rest/v1/checkins?' + q, { method: 'DELETE', headers: sbHeaders() });
+  } catch (e) {
+    console.warn('☁️ 删除打卡失败:', e.message);
+  }
+}
+
+// 合并云端打卡到本地
 function mergeCloudCheckins(localCheckins, cloudCheckins) {
   if (!cloudCheckins || cloudCheckins.length === 0) return localCheckins;
   const localSet = new Set(localCheckins.map(c => c.courseId + '|' + c.date));
@@ -1473,6 +1525,21 @@ function mergeCloudCheckins(localCheckins, cloudCheckins) {
     }
   });
   return merged;
+}
+
+// 定期从云端同步
+async function syncFromCloud() {
+  const cloudData = await fetchCloudCheckins();
+  if (cloudData && cloudData.length > 0) {
+    const merged = mergeCloudCheckins(appData.checkins, cloudData);
+    if (merged.length !== appData.checkins.length) {
+      appData.checkins = merged;
+      saveData(appData);
+      renderChildMode();
+      console.log('☁️ 云端同步完成，合并了', merged.length, '条打卡记录');
+    }
+  }
+  setTimeout(() => syncFromCloud(), 5 * 60 * 1000);
 }
 
 // ============================================================
@@ -3132,10 +3199,9 @@ const origKeydown = document.addEventListener('keydown', (e) => {
 // ============================================================
 function init() {
   renderChildMode();
+  // 启动时从云端拉取打卡记录合并
+  syncFromCloud();
 }
-
-// 占位 — 云同步恢复时启用
-async function syncFromCloud() {}
 
 document.addEventListener('DOMContentLoaded', init);
 
