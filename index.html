@@ -1239,7 +1239,11 @@ body::after {
           <div class="icon orange">🗑️</div>
           <div class="title">数据管理</div>
         </div>
-        <button class="btn btn-danger btn-block" onclick="clearAllData()">🗑️ 清除所有数据</button>
+        <button class="btn btn-orange btn-block" onclick="syncHistoryToCloud()">☁️ 上传历史打卡到云端</button>
+        <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:8px;text-align:center;" id="syncHistoryStatus">
+          将本设备所有本地打卡记录上传至云端，实现多设备同步
+        </p>
+        <button class="btn btn-danger btn-block" onclick="clearAllData()" style="margin-top:10px;">🗑️ 清除所有数据</button>
         <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:8px;text-align:center;">
           此操作不可恢复，将重置为默认数据
         </p>
@@ -1543,6 +1547,41 @@ async function syncFromCloud() {
     }
   }
   setTimeout(() => syncFromCloud(), 5 * 60 * 1000);
+}
+
+// 上传本设备所有历史打卡记录到云端（用于首次同步）
+async function syncHistoryToCloud() {
+  const statusEl = document.getElementById('syncHistoryStatus');
+  statusEl.textContent = '⏳ 正在上传...';
+
+  const localCheckins = appData.checkins;
+  if (localCheckins.length === 0) {
+    statusEl.textContent = '📭 本设备没有本地打卡记录';
+    setTimeout(() => {
+      statusEl.textContent = '将本设备所有本地打卡记录上传至云端，实现多设备同步';
+    }, 3000);
+    return;
+  }
+
+  let success = 0, fail = 0;
+  for (const c of localCheckins) {
+    try {
+      await uploadCheckin(c.courseId, c.date);
+      success++;
+    } catch (e) {
+      fail++;
+    }
+  }
+
+  statusEl.textContent = `✅ 上传完成：成功 ${success} 条${fail > 0 ? '，失败 ' + fail + ' 条' : ''}`;
+  // 上传完后立即拉取云端数据合并
+  await syncFromCloud();
+  renderChildMode();
+  renderParentMode();
+
+  setTimeout(() => {
+    statusEl.textContent = '将本设备所有本地打卡记录上传至云端，实现多设备同步';
+  }, 5000);
 }
 
 // ============================================================
