@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>🦊🐰 疯狂课程表 · Zootopia Scheduler</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
 /* ============================================================
    CSS Custom Properties & Reset
@@ -1451,14 +1450,10 @@ const DAY_NAMES = ['周日', '周一', '周二', '周三', '周四', '周五', '
 const DAY_NAMES_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
 
 // ============================================================
-// Supabase Cloud Sync
+// Supabase Cloud Sync (using fetch — no external SDK needed)
 // ============================================================
 const SUPABASE_URL = 'https://lbzjuxhllrrcmenfrogr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxiemp1eGhsbHJyY21lbmZyb2dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MTQ4NzMsImV4cCI6MjA5ODQ5MDg3M30.a-v15kYhNTQuRzlnOTqvO2_T7W4uJSJY47CsFpAIklk';
-const supabase = (window.supabase && window.supabase.createClient)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
-if (!supabase) console.warn('Supabase SDK 未加载，云同步功能不可用');
 
 // 设备ID：每个浏览器/设备自动生成一个唯一ID，存在localStorage里
 function getDeviceId() {
@@ -1471,50 +1466,59 @@ function getDeviceId() {
 }
 const DEVICE_ID = getDeviceId();
 
-// 从Supabase拉取云端打卡记录（返回数组，网络失败时返回null）
+// 通用 Supabase REST 请求头
+function supabaseHeaders() {
+  return {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+}
+
+// 从Supabase拉取云端打卡记录
 async function fetchCloudCheckins() {
-  if (!supabase) return null;
   try {
-    const { data, error } = await supabase
-      .from('checkins')
-      .select('course_id, date, device_id, timestamp');
-    if (error) throw error;
-    return data || [];
+    const url = SUPABASE_URL + '/rest/v1/checkins?select=course_id,date,device_id,timestamp';
+    const res = await fetch(url, { headers: supabaseHeaders() });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json() || [];
   } catch (e) {
     console.warn('Supabase 同步失败（稍后自动重试）:', e.message);
     return null;
   }
 }
 
-// 上传打卡记录到Supabase（异步，不阻塞UI）
+// 上传打卡记录到Supabase
 async function uploadCheckin(courseId, dateStr) {
-  if (!supabase) return;
   try {
-    const { error } = await supabase
-      .from('checkins')
-      .upsert({
+    await fetch(SUPABASE_URL + '/rest/v1/checkins', {
+      method: 'POST',
+      headers: supabaseHeaders(),
+      body: JSON.stringify({
         course_id: courseId,
         date: dateStr,
         device_id: DEVICE_ID,
         timestamp: Date.now()
-      }, { onConflict: 'course_id, date, device_id' });
-    if (error) throw error;
+      })
+    });
   } catch (e) {
     console.warn('打卡同步到云端失败:', e.message);
   }
 }
 
-// 从Supabase删除打卡记录（取消打卡时）
+// 从Supabase删除打卡记录
 async function removeCloudCheckin(courseId, dateStr) {
-  if (!supabase) return;
   try {
-    const { error } = await supabase
-      .from('checkins')
-      .delete()
-      .eq('course_id', courseId)
-      .eq('date', dateStr)
-      .eq('device_id', DEVICE_ID);
-    if (error) throw error;
+    const params = new URLSearchParams({
+      'course_id': 'eq.' + courseId,
+      'date': 'eq.' + dateStr,
+      'device_id': 'eq.' + DEVICE_ID
+    });
+    await fetch(SUPABASE_URL + '/rest/v1/checkins?' + params.toString(), {
+      method: 'DELETE',
+      headers: supabaseHeaders()
+    });
   } catch (e) {
     console.warn('取消打卡同步到云端失败:', e.message);
   }
