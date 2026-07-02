@@ -1379,41 +1379,49 @@ body::after {
 // Default Data
 // ============================================================
 const DEFAULT_COURSES = [
-  // Calligraphy — same time Mon-Fri
-  { id: 'c1', name: '书法课', emoji: '✍️', day: 1, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:1,startTime:'13:30',endTime:'16:30'}] },
-  { id: 'c2', name: '书法课', emoji: '✍️', day: 2, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:2,startTime:'13:30',endTime:'16:30'}] },
-  { id: 'c3', name: '书法课', emoji: '✍️', day: 3, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:3,startTime:'13:30',endTime:'16:30'}] },
-  { id: 'c4', name: '书法课', emoji: '✍️', day: 4, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:4,startTime:'13:30',endTime:'16:30'}] },
-  { id: 'c5', name: '书法课', emoji: '✍️', day: 5, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '书法教室', teacher: '', schedules: [{day:5,startTime:'13:30',endTime:'16:30'}] },
-  // Flexible daily tasks
-  { id: 'f1', name: '语文大阅读', emoji: '📖', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
-  { id: 'f2', name: '英语单词打卡', emoji: '🔤', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
-  { id: 'f3', name: '听力练习', emoji: '🎧', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
-  { id: 'f4', name: '数学练习', emoji: '➕', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
-  // Duplicate flexible tasks for Tue-Fri
-  ...['f5','f6','f7','f8'].map((id, i) => ({ id, name: '语文大阅读', emoji: '📖', day: 2, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:2,startTime:'09:00',endTime:'21:00'}] })),
-  ...['f9','f10','f11','f12'].map((id, i) => {
-    const tasks = ['英语单词打卡','听力练习','数学练习','语文大阅读'];
-    return { id, name: tasks[i], emoji: ['🔤','🎧','➕','📖'][i], day: 3, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:3,startTime:'09:00',endTime:'21:00'}] };
+  // 小小书法家 — 暑假期间周一到五 13:30-16:30
+  { id: 'c1', name: '小小书法家', emoji: '🖌️', day: 1, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '雅逸书法米罗湾校区', teacher: '', schedules: [{day:1,startTime:'13:30',endTime:'16:30'}] },
+  { id: 'c2', name: '小小书法家', emoji: '🖌️', day: 2, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '雅逸书法米罗湾校区', teacher: '', schedules: [{day:2,startTime:'13:30',endTime:'16:30'}] },
+  { id: 'c3', name: '小小书法家', emoji: '🖌️', day: 3, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '雅逸书法米罗湾校区', teacher: '', schedules: [{day:3,startTime:'13:30',endTime:'16:30'}] },
+  { id: 'c4', name: '小小书法家', emoji: '🖌️', day: 4, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '雅逸书法米罗湾校区', teacher: '', schedules: [{day:4,startTime:'13:30',endTime:'16:30'}] },
+  { id: 'c5', name: '小小书法家', emoji: '🖌️', day: 5, startTime: '13:30', endTime: '16:30', type: 'fixed', points: 10, location: '雅逸书法米罗湾校区', teacher: '', schedules: [{day:5,startTime:'13:30',endTime:'16:30'}] },
+  // 暑假每日打卡 — 周一到五（在家完成）
+  { id: 's1', name: '菲尔德作业', emoji: '📝', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  { id: 's2', name: '书法练习', emoji: '✍️', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  { id: 's3', name: '阅读', emoji: '📖', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  { id: 's4', name: '古诗', emoji: '🏯', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  { id: 's5', name: '单词', emoji: '🔤', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  { id: 's6', name: '听力', emoji: '🎧', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  { id: 's7', name: '算数', emoji: '➕', day: 1, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:1,startTime:'09:00',endTime:'21:00'}] },
+  // Duplicate daily tasks for Tue (day 2)
+  ...['s8','s9','s10','s11','s12','s13','s14'].map((id, i) => {
+    const tasks = ['菲尔德作业','书法练习','阅读','古诗','单词','听力','算数'];
+    const emojis = ['📝','✍️','📖','🏯','🔤','🎧','➕'];
+    return { id, name: tasks[i], emoji: emojis[i], day: 2, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:2,startTime:'09:00',endTime:'21:00'}] };
   }),
-  ...['f13','f14','f15','f16'].map((id, i) => {
-    const tasks = ['英语单词打卡','听力练习','数学练习','语文大阅读'];
-    return { id, name: tasks[i], emoji: ['🔤','🎧','➕','📖'][i], day: 4, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:4,startTime:'09:00',endTime:'21:00'}] };
+  // Wed (day 3)
+  ...['s15','s16','s17','s18','s19','s20','s21'].map((id, i) => {
+    const tasks = ['菲尔德作业','书法练习','阅读','古诗','单词','听力','算数'];
+    const emojis = ['📝','✍️','📖','🏯','🔤','🎧','➕'];
+    return { id, name: tasks[i], emoji: emojis[i], day: 3, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:3,startTime:'09:00',endTime:'21:00'}] };
   }),
-  ...['f17','f18','f19','f20'].map((id, i) => {
-    const tasks = ['英语单词打卡','听力练习','数学练习','语文大阅读'];
-    return { id, name: tasks[i], emoji: ['🔤','🎧','➕','📖'][i], day: 5, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:5,startTime:'09:00',endTime:'21:00'}] };
+  // Thu (day 4)
+  ...['s22','s23','s24','s25','s26','s27','s28'].map((id, i) => {
+    const tasks = ['菲尔德作业','书法练习','阅读','古诗','单词','听力','算数'];
+    const emojis = ['📝','✍️','📖','🏯','🔤','🎧','➕'];
+    return { id, name: tasks[i], emoji: emojis[i], day: 4, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:4,startTime:'09:00',endTime:'21:00'}] };
   }),
-  // Flexible tasks for weekends
-  { id: 'f21', name: '语文大阅读', emoji: '📖', day: 6, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:6,startTime:'09:00',endTime:'21:00'}] },
-  { id: 'f22', name: '英语单词打卡', emoji: '🔤', day: 6, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:6,startTime:'09:00',endTime:'21:00'}] },
-  { id: 'f23', name: '语文大阅读', emoji: '📖', day: 0, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:0,startTime:'09:00',endTime:'21:00'}] },
-  { id: 'f24', name: '英语单词打卡', emoji: '🔤', day: 0, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:0,startTime:'09:00',endTime:'21:00'}] },
-  // Fixed courses with DIFFERENT times on different days
-  { id: 'c6', name: '篮球课', emoji: '🏀', day: 3, startTime: '18:30', endTime: '20:00', type: 'fixed', points: 10, location: '体育馆', teacher: '', schedules: [{day:3,startTime:'18:30',endTime:'20:00'},{day:6,startTime:'19:00',endTime:'20:30'}] },
-  { id: 'c7', name: '菲尔德英语', emoji: '🇺🇸', day: 4, startTime: '18:40', endTime: '20:10', type: 'fixed', points: 10, location: '菲尔德校区', teacher: '', schedules: [{day:4,startTime:'18:40',endTime:'20:10'},{day:6,startTime:'10:40',endTime:'12:10'}] },
-  { id: 'c8', name: '菲尔德英语', emoji: '🇺🇸', day: 6, startTime: '10:40', endTime: '12:10', type: 'fixed', points: 10, location: '菲尔德校区', teacher: '', schedules: [{day:4,startTime:'18:40',endTime:'20:10'},{day:6,startTime:'10:40',endTime:'12:10'}] },
-  { id: 'c9', name: '篮球课', emoji: '🏀', day: 6, startTime: '19:00', endTime: '20:30', type: 'fixed', points: 10, location: '体育馆', teacher: '', schedules: [{day:3,startTime:'18:30',endTime:'20:00'},{day:6,startTime:'19:00',endTime:'20:30'}] },
+  // Fri (day 5)
+  ...['s29','s30','s31','s32','s33','s34','s35'].map((id, i) => {
+    const tasks = ['菲尔德作业','书法练习','阅读','古诗','单词','听力','算数'];
+    const emojis = ['📝','✍️','📖','🏯','🔤','🎧','➕'];
+    return { id, name: tasks[i], emoji: emojis[i], day: 5, startTime: '09:00', endTime: '21:00', type: 'flexible', points: 5, location: '家中', teacher: '', schedules: [{day:5,startTime:'09:00',endTime:'21:00'}] };
+  }),
+  // Fixed courses (全年不变)
+  { id: 'c6', name: '篮球课', emoji: '🏀', day: 3, startTime: '18:30', endTime: '20:00', type: 'fixed', points: 10, location: '冠昂篮球宾川路校区', teacher: '', schedules: [{day:3,startTime:'18:30',endTime:'20:00'},{day:6,startTime:'19:00',endTime:'20:30'}] },
+  { id: 'c7', name: '菲尔德英语', emoji: '🇺🇸', day: 4, startTime: '18:40', endTime: '20:10', type: 'fixed', points: 10, location: '李沧万达', teacher: '', schedules: [{day:4,startTime:'18:40',endTime:'20:10'},{day:6,startTime:'10:40',endTime:'12:10'}] },
+  { id: 'c8', name: '菲尔德英语', emoji: '🇺🇸', day: 6, startTime: '10:40', endTime: '12:10', type: 'fixed', points: 10, location: '李沧万达', teacher: '', schedules: [{day:4,startTime:'18:40',endTime:'20:10'},{day:6,startTime:'10:40',endTime:'12:10'}] },
+  { id: 'c9', name: '篮球课', emoji: '🏀', day: 6, startTime: '19:00', endTime: '20:30', type: 'fixed', points: 10, location: '冠昂篮球宾川路校区', teacher: '', schedules: [{day:3,startTime:'18:30',endTime:'20:00'},{day:6,startTime:'19:00',endTime:'20:30'}] },
 ];
 
 // ============================================================
